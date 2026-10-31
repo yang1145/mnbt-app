@@ -54,13 +54,14 @@ class CloudServerRepository(
         }
 
     /**
-     * 对每个 ACTIVE 站点并发拉取服务器列表。单站点失败不拖垮整体：
-     * 该站点置 NEEDS_REPAIR 并继续（401 时 CloudAuth 已先做过 refresh-重试一次）。
+     * 对每个站点并发拉取服务器列表（含 NEEDS_REPAIR 站点：令牌可能已被上一轮修好，
+     * 拉成功即恢复 ACTIVE，避免误标站点永远出不了数据）。单站点失败不拖垮整体；
+     * 只有 401（令牌确实失效，CloudAuth 已先做过 single-flight refresh-重试）才保持
+     * NEEDS_REPAIR，其余错误（网络抖动等）保留上一份快照与站点状态，等下次刷新自愈。
      */
     suspend fun refresh(): Result<Unit> = asResult {
         refreshMutex.withLock {
             val sites = cloudSiteDao.observeAll().first()
-                .filter { it.status == CloudSiteStatus.ACTIVE.name }
             coroutineScope {
                 sites.map { site ->
                     async {
@@ -73,12 +74,16 @@ class CloudServerRepository(
                                 current.filterNot { it.siteId == site.id } + summaries
                             }
                             summaries.forEach { rememberModule(site.id, it.hostId, it.module) }
+                            if (site.status != CloudSiteStatus.ACTIVE.name) {
+                                cloudSiteDao.updateStatus(site.id, CloudSiteStatus.ACTIVE.name)
+                            }
                         } catch (e: CancellationException) {
                             throw e
-                        } catch (_: Exception) {
-                            auth.markNeedsRepair(site.id)
-                            serversState.update { current ->
-                                current.filterNot { it.siteId == site.id }
+                        } catch (e: Exception) {
+                            if (e is ZjmfException && e.status == 401) {
+                                serversState.update { current ->
+                                    current.filterNot { it.siteId == site.id }
+                                }
                             }
                         }
                     }

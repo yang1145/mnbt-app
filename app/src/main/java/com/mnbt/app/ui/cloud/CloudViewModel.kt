@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.mnbt.app.AppContainer
 import com.mnbt.app.domain.model.CloudServerSummary
 import com.mnbt.app.domain.model.CloudSite
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -66,8 +65,9 @@ class CloudViewModel(private val container: AppContainer) : ViewModel() {
 
     /**
      * 下拉刷新（对齐 HostsScreen）：进入即刷一次，之后手动触发。
-     * 站点侧 refreshSite 与服务器侧 refresh 并发跑；列表由 Flow diff 更新，
-     * 单站点失败不阻塞其他站点（结果体现在各站数据是否变化上）。
+     * 只拉服务器列表；设备令牌 30 天滑动续期由 CloudAuth 在请求 401 时按需完成，
+     * 不在这里主动轮换 —— 与列表请求并发轮换会把在飞请求打成 401，
+     * 症状是站点下永远拉不到服务器、还被误标「需重新绑定」。
      */
     fun refresh() {
         viewModelScope.launch {
@@ -75,12 +75,7 @@ class CloudViewModel(private val container: AppContainer) : ViewModel() {
             val sites = container.cloudSiteRepository.sites().first()
             if (sites.isEmpty()) return@launch
             syncing.value = true
-            coroutineScope {
-                launch { container.cloudServerRepository.refresh() }
-                sites.forEach { site ->
-                    launch { container.cloudSiteRepository.refreshSite(site.id) }
-                }
-            }
+            container.cloudServerRepository.refresh()
             syncing.value = false
         }
     }

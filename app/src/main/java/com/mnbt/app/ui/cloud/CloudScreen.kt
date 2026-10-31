@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,7 +31,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -43,12 +40,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.mnbt.app.R
-import com.mnbt.app.domain.model.CloudServerSummary
 import com.mnbt.app.domain.model.CloudSiteStatus
 import com.mnbt.app.ui.common.mnbtViewModel
 import com.mnbt.app.ui.components.EmptyState
 import com.mnbt.app.ui.nav.Destinations
 import com.mnbt.app.ui.nav.Destinations.openCloudServerDetail
+import com.mnbt.app.ui.nav.Destinations.openCloudSiteDetail
 import com.mnbt.app.ui.theme.AppCorner
 import com.mnbt.app.ui.theme.AppDimens
 import com.mnbt.app.ui.theme.LocalAppPalette
@@ -124,6 +121,7 @@ fun CloudScreen(navController: NavController, modifier: Modifier = Modifier) {
                                 siteName = group.site.name,
                                 needsRepair = group.site.status == CloudSiteStatus.NEEDS_REPAIR,
                                 count = group.servers.size,
+                                onOpen = { navController.openCloudSiteDetail(group.site.id) },
                                 onUnbind = { unbindTarget = group.site.id },
                             )
                         }
@@ -141,12 +139,9 @@ fun CloudScreen(navController: NavController, modifier: Modifier = Modifier) {
                             count = group.servers.size,
                             key = { index -> "srv-${group.site.id}-${group.servers[index].hostId}" },
                         ) { index ->
-                            ServerRow(
-                                server = group.servers[index],
-                                onClick = {
-                                    navController.openCloudServerDetail(group.site.id, group.servers[index].hostId)
-                                },
-                            )
+                            CloudServerRow(server = group.servers[index]) {
+                                navController.openCloudServerDetail(group.site.id, group.servers[index].hostId)
+                            }
                         }
                     }
                 }
@@ -241,12 +236,13 @@ private fun StatusBar(state: CloudUiState) {
     }
 }
 
-/** 分组头：站点名 + 「需重新绑定」红标 + 台数，右侧解绑入口。 */
+/** 分组头：站点名 + 「需重新绑定」红标 + 台数，点击整行进站点详情；右侧解绑入口独立。 */
 @Composable
 private fun SiteGroupHeader(
     siteName: String,
     needsRepair: Boolean,
     count: Int,
+    onOpen: () -> Unit,
     onUnbind: () -> Unit,
 ) {
     val palette = LocalAppPalette.current
@@ -256,106 +252,41 @@ private fun SiteGroupHeader(
             .padding(start = 4.dp, top = 16.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            text = siteName,
-            style = MaterialTheme.typography.labelLarge,
-            color = palette.textSecondary,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f, fill = false),
-        )
-        if (needsRepair) {
-            Text(
-                text = stringResource(R.string.cloud_site_needs_repair),
-                style = MaterialTheme.typography.labelLarge,
-                color = palette.error,
-                modifier = Modifier.padding(start = 8.dp),
-            )
-        }
-        Text(
-            text = stringResource(R.string.cloud_site_servers, count),
-            style = MaterialTheme.typography.labelMedium,
-            color = palette.textPlaceholder,
-            modifier = Modifier
-                .weight(1f)
-                .padding(start = 8.dp),
-        )
-        TextButton(onClick = onUnbind) {
-            Text(text = stringResource(R.string.cloud_site_unbind), color = palette.error)
-        }
-    }
-}
-
-/** 服务器卡片：名称 + IP 副行，右侧电源 chip + 到期（≤7 天红）。 */
-@Composable
-private fun ServerRow(server: CloudServerSummary, onClick: () -> Unit) {
-    val palette = LocalAppPalette.current
-    val dash = stringResource(R.string.value_dash)
-    val due = cloudDueLabel(server.dueTimeEpochMs)
-
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .border(AppDimens.Hairline, palette.outline, AppCorner.Card)
-            .background(palette.surface, AppCorner.Card)
-            .clip(AppCorner.Card)
-            .clickable(onClick = onClick),
-    ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(AppDimens.RowHeightWithSubtitle)
-                .padding(horizontal = AppDimens.ScreenPadding),
+                .weight(1f)
+                .clip(AppCorner.Control)
+                .clickable(onClick = onOpen)
+                .padding(vertical = 2.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(
+            Text(
+                text = siteName,
+                style = MaterialTheme.typography.labelLarge,
+                color = palette.textSecondary,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f, fill = false),
+            )
+            if (needsRepair) {
+                Text(
+                    text = stringResource(R.string.cloud_site_needs_repair),
+                    style = MaterialTheme.typography.labelLarge,
+                    color = palette.error,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+            Text(
+                text = stringResource(R.string.cloud_site_servers, count),
+                style = MaterialTheme.typography.labelMedium,
+                color = palette.textPlaceholder,
                 modifier = Modifier
                     .weight(1f)
-                    .padding(end = 12.dp),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = server.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = palette.textPrimary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(
-                    text = server.dedicateIp?.takeIf { it.isNotBlank() } ?: dash,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = palette.textSecondary,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.padding(top = 2.dp),
-                )
-            }
-
-            PowerChip(status = server.powerStatus, desc = server.powerDesc)
-
-            if (due != null) {
-                // 右列限宽，避免到期文字把名称挤没
-                Text(
-                    text = due.first,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = due.second,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .width(72.dp),
-                )
-            }
-
-            Icon(
-                painter = painterResource(R.drawable.ic_arrow_left),
-                contentDescription = null,
-                modifier = Modifier
-                    .padding(start = 8.dp)
-                    .size(16.dp)
-                    .rotate(180f),
-                tint = palette.textPlaceholder,
+                    .padding(start = 8.dp),
             )
+        }
+        TextButton(onClick = onUnbind) {
+            Text(text = stringResource(R.string.cloud_site_unbind), color = palette.error)
         }
     }
 }

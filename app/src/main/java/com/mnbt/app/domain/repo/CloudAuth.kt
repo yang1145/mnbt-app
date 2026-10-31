@@ -6,6 +6,8 @@ import com.mnbt.app.data.local.secure.TokenVault
 import com.mnbt.app.data.remote.api.zjmf.ZjmfClient
 import com.mnbt.app.data.remote.api.zjmf.ZjmfException
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.util.UUID
 
 /** 401 双形态（HTTP 401 / 包络 status 401）兜底后的统一对外文案。 */
@@ -39,6 +41,9 @@ internal class CloudAuth(
     private val client: ZjmfClient,
 ) {
 
+    /** 并发的 401 恢复只允许一个协程真正调 refresh，其余等锁后复用新令牌。 */
+    private val refreshMutex = Mutex()
+
     data class Credential(val site: CloudSiteEntity, val token: String)
 
     /**
@@ -62,12 +67,7 @@ internal class CloudAuth(
         } catch (first: ZjmfException) {
             if (first.status != 401) throw first
 
-            val refreshed = try {
-                refreshAndStore(cred)
-            } catch (e: ZjmfException) {
-                markNeedsRepair(siteId)
-                throw ZjmfException(401, CLOUD_LOGIN_EXPIRED, e.errorCode)
-            }
+            val refreshed = recoverAfter401(siteId, cred)
             try {
                 block(refreshed)
             } catch (second: ZjmfException) {
@@ -79,6 +79,28 @@ internal class CloudAuth(
             }
         }
     }
+
+    /**
+     * 401 后的续期，single-flight：列表/详情/状态等多个请求可能同时吃到同一个 401，
+     * 不加锁会各自调一次 refresh —— refresh 是轮换式的（旧令牌即刻作废），
+     * 后到的那个拿着已被作废的令牌必然失败，把好端端的站点误标成「需重新绑定」。
+     * 拿到锁后先复查令牌是否已被其他协程换新（tokenRef 变了就直接复用），
+     * 确认仍是最旧的才真正调 refresh。
+     */
+    private suspend fun recoverAfter401(siteId: Long, stale: Credential): Credential =
+        refreshMutex.withLock {
+            val latest = credential(siteId)
+            if (latest != null && latest.site.tokenRef != stale.site.tokenRef) {
+                latest
+            } else {
+                try {
+                    refreshAndStore(latest ?: stale)
+                } catch (e: ZjmfException) {
+                    markNeedsRepair(siteId)
+                    throw ZjmfException(401, CLOUD_LOGIN_EXPIRED, e.errorCode)
+                }
+            }
+        }
 
     /** 换新令牌：新 ref 入库 → Room 指向新 ref → 旧 ref 从密文库移除（不留孤儿）。 */
     suspend fun refreshAndStore(cred: Credential): Credential {

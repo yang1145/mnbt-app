@@ -37,6 +37,7 @@ import com.mnbt.app.ui.cloud.CloudPairScanScreen
 import com.mnbt.app.ui.cloud.CloudPairTrustScreen
 import com.mnbt.app.ui.cloud.CloudScreen
 import com.mnbt.app.ui.cloud.CloudServerDetailScreen
+import com.mnbt.app.ui.cloud.CloudSiteDetailScreen
 import com.mnbt.app.ui.cloud.CloudSiteManageScreen
 import com.mnbt.app.ui.database.DatabaseScreen
 import com.mnbt.app.ui.database.SqlImportScreen
@@ -239,6 +240,17 @@ fun AppRoot() {
                     },
                 ),
             ) { entry -> CloudPairTrustScreen(navController, entry) }
+            composable(
+                route = Destinations.CLOUD_SITE_DETAIL,
+                arguments = listOf(
+                    navArgument(Destinations.ARG_SITE_ID) { type = NavType.LongType },
+                ),
+            ) { entry ->
+                CloudSiteDetailScreen(
+                    navController = navController,
+                    siteId = entry.requireSiteId(),
+                )
+            }
             composable(
                 route = Destinations.CLOUD_SERVER_DETAIL,
                 arguments = listOf(

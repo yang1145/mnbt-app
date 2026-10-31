@@ -31,6 +31,7 @@ object Destinations {
     const val ARG_SITE_ID = "siteId"
     // {hostId} 一律 LongType（主机详情与云服务器详情共用参数名）
     const val ARG_HOST_ID = "hostId"
+    const val CLOUD_SITE_DETAIL = "cloud/site/{$ARG_SITE_ID}"
     const val CLOUD_SERVER_DETAIL = "cloud/server/{$ARG_SITE_ID}/{$ARG_HOST_ID}"
 
     // 主机详情与功能页
@@ -96,6 +97,8 @@ object Destinations {
 
     fun NavController.openCloudServerDetail(siteId: Long, hostId: Long) =
         navigate("cloud/server/$siteId/$hostId")
+
+    fun NavController.openCloudSiteDetail(siteId: Long) = navigate("cloud/site/$siteId")
 }
 
 /** 从 back stack 里取 hostId，缺失即编程错误，直接抛而不是给默认值。 */

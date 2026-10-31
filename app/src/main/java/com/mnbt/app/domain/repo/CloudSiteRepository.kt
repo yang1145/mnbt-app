@@ -5,7 +5,6 @@ import com.mnbt.app.data.local.db.CloudSiteDao
 import com.mnbt.app.data.local.db.CloudSiteEntity
 import com.mnbt.app.data.local.secure.TokenVault
 import com.mnbt.app.data.remote.api.zjmf.ZjmfClient
-import com.mnbt.app.data.remote.api.zjmf.ZjmfException
 import com.mnbt.app.data.remote.http.HostUrl
 import com.mnbt.app.domain.model.CloudSite
 import com.mnbt.app.domain.model.CloudSiteConfig
@@ -106,28 +105,6 @@ class CloudSiteRepository(
         require(trimmed.length <= SITE_NAME_MAX_LENGTH) { "站点名称过长（最多 $SITE_NAME_MAX_LENGTH 个字）" }
         cloudSiteDao.updateName(siteId, trimmed)
         Unit
-    }
-
-    /**
-     * 手动续期。refresh 成功 → 换新令牌并把站点拉回 ACTIVE（NEEDS_REPAIR 的自救入口）；
-     * refresh 因 401 失败 → 站点标记 NEEDS_REPAIR 并抛「登录已失效」（对齐统一 401 策略）；
-     * 其余错误（如网络超时）原样透传，不动站点状态。
-     */
-    suspend fun refreshSite(siteId: Long): Result<Unit> = asResult {
-        val cred = auth.credential(siteId) ?: run {
-            auth.markNeedsRepair(siteId)
-            throw ZjmfException(401, CLOUD_LOGIN_EXPIRED)
-        }
-        try {
-            auth.refreshAndStore(cred)
-        } catch (e: ZjmfException) {
-            if (e.status == 401) {
-                auth.markNeedsRepair(siteId)
-                throw ZjmfException(401, CLOUD_LOGIN_EXPIRED, e.errorCode)
-            }
-            throw e
-        }
-        cloudSiteDao.updateStatus(siteId, CloudSiteStatus.ACTIVE.name)
     }
 
     private fun CloudSiteEntity.toDomain(): CloudSite = CloudSite(
