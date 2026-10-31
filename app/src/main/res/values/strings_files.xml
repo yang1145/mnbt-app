@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- P3 文件管理屏专属文案（filemanager 包的资源例外，见交付报告）。 -->
+<resources>
+    <string name="files_title">文件管理</string>
+    <string name="files_nav_up">返回</string>
+    <string name="files_new_or_upload">新建或上传</string>
+    <string name="files_root_label">根目录</string>
+
+    <string name="files_sort_toggle">切换排序</string>
+    <string name="files_sort_name">名称</string>
+    <string name="files_sort_time">时间</string>
+
+    <string name="files_empty_title">空目录</string>
+    <string name="files_empty_desc">当前目录下没有任何文件和子目录</string>
+    <string name="files_load_failed_title">加载失败</string>
+    <string name="files_retry_action">重试</string>
+    <string name="files_need_repair_title">需要重新配对</string>
+    <string name="files_need_repair_desc">令牌已失效或在本机丢失，请到「我的 → 主机管理」确认后重新扫码绑定。</string>
+    <string name="files_readonly_title">只读模式</string>
+
+    <string name="files_action_rename">重命名</string>
+    <string name="files_action_delete">删除</string>
+    <string name="files_action_more">更多</string>
+    <string name="files_selected_mark">已选中</string>
+
+    <string name="files_menu_copy_to">复制到…</string>
+    <string name="files_menu_compress_to">压缩为…</string>
+    <string name="files_menu_unzip">解压</string>
+    <string name="files_menu_access">改权限</string>
+    <string name="files_menu_size">查看大小</string>
+
+    <string name="files_selected_n">已选 %1$d 项</string>
+    <string name="files_batch_delete">删除</string>
+    <string name="files_batch_cancel">取消</string>
+
+    <string name="files_sheet_new_dir">新建目录</string>
+    <string name="files_sheet_new_file">新建文件</string>
+    <string name="files_sheet_upload">上传文件</string>
+    <string name="files_download">下载</string>
+    <string name="files_view_access">查看权限</string>
+
+    <string name="files_dialog_rename_title">重命名</string>
+    <string name="files_dialog_delete_title">确认删除</string>
+    <string name="files_dialog_delete_text">将删除 %1$s，此操作不可恢复。</string>
+    <string name="files_dialog_delete_confirm">删除</string>
+    <string name="files_dialog_copy_title">复制到</string>
+    <string name="files_dialog_compress_title">压缩为</string>
+    <string name="files_dialog_create_dir_title">新建目录</string>
+    <string name="files_dialog_create_file_title">新建文件</string>
+    <string name="files_dialog_access_title">权限</string>
+    <string name="files_dialog_size_title">查看大小</string>
+
+    <string name="files_input_name_hint">名称</string>
+    <string name="files_input_path_hint">目标完整路径（以 / 开头）</string>
+    <string name="files_input_archive_hint">压缩包文件名（如 archive.zip）</string>
+    <string name="files_perm_hint">权限值（如 644）</string>
+    <string name="files_perm_recurse">递归应用到子目录</string>
+    <string name="files_owner_label">归属 %1$s : %2$s</string>
+    <string name="files_loading_size">查询中…</string>
+
+    <string name="files_confirm">确定</string>
+    <string name="files_apply">应用</string>
+    <string name="files_cancel">取消</string>
+    <string name="files_dismiss">关闭</string>
+
+    <string name="files_upload_progress">上传 %1$s（%2$d/%3$d）</string>
+
+    <string name="files_readonly_hint">主机已到期或被封禁，当前只能查看</string>
+    <string name="files_msg_renamed">已重命名</string>
+    <string name="files_msg_deleted">已删除</string>
+    <string name="files_msg_batch_deleted">已删除 %1$d/%2$d</string>
+    <string name="files_msg_copied">已复制</string>
+    <string name="files_msg_compressed">已提交压缩</string>
+    <string name="files_msg_unzipped">已提交解压</string>
+    <string name="files_msg_created">已创建</string>
+    <string name="files_msg_perm_set">权限已更新</string>
+    <string name="files_msg_bad_name">名称不能为空且不能包含 /</string>
+    <string name="files_msg_need_abs_path">目标路径必须以 / 开头</string>
+    <string name="files_msg_bad_perm">权限值需为 3~4 位八进制数字</string>
+    <string name="files_msg_need_repair">令牌无效或已丢失，请重新扫码配对</string>
+    <string name="files_msg_request_failed">请求失败</string>
+    <string name="files_msg_no_download_url">服务端未返回下载地址</string>
+    <string name="files_msg_download_done">已下载到下载目录：%1$s</string>
+    <string name="files_msg_download_failed">下载失败</string>
+    <string name="files_msg_upload_busy">已有传输任务在进行中</string>
+    <string name="files_msg_upload_unreadable">无法读取所选文件</string>
+    <string name="files_msg_upload_too_large">文件超过服务端上限 %1$s</string>
+    <string name="files_msg_upload_done">上传完成：%1$s</string>
+    <string name="files_msg_upload_failed">上传失败</string>
+</resources>

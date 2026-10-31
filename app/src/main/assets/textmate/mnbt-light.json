@@ -1,0 +1,86 @@
+{
+  "name": "MNBT Light",
+  "type": "light",
+  "tokenColors": [
+    {
+      "settings": {
+        "foreground": "#181818",
+        "background": "#FFFFFF"
+      }
+    },
+    {
+      "name": "Comment",
+      "scope": ["comment", "punctuation.definition.comment"],
+      "settings": {
+        "fontStyle": "italic",
+        "foreground": "#8C8C8C"
+      }
+    },
+    {
+      "name": "Keyword",
+      "scope": ["keyword", "keyword.control", "storage.type", "storage.modifier"],
+      "settings": {
+        "foreground": "#0B57D0"
+      }
+    },
+    {
+      "name": "String",
+      "scope": ["string", "punctuation.definition.string"],
+      "settings": {
+        "foreground": "#2BA471"
+      }
+    },
+    {
+      "name": "Number",
+      "scope": ["constant.numeric", "constant.language"],
+      "settings": {
+        "foreground": "#E37318"
+      }
+    },
+    {
+      "name": "Function",
+      "scope": ["entity.name.function", "support.function"],
+      "settings": {
+        "foreground": "#0B57D0"
+      }
+    },
+    {
+      "name": "Type / Class",
+      "scope": ["entity.name.type", "entity.other.inherited-class", "support.class"],
+      "settings": {
+        "foreground": "#595959"
+      }
+    },
+    {
+      "name": "Variable",
+      "scope": ["variable", "variable.other", "punctuation.definition.variable"],
+      "settings": {
+        "foreground": "#D54941"
+      }
+    },
+    {
+      "name": "Operator / Punctuation",
+      "scope": ["keyword.operator", "punctuation"],
+      "settings": {
+        "foreground": "#595959"
+      }
+    },
+    {
+      "name": "Tag",
+      "scope": ["entity.name.tag", "punctuation.definition.tag"],
+      "settings": {
+        "foreground": "#0B57D0"
+      }
+    }
+  ],
+  "colors": {
+    "editor.background": "#FFFFFF",
+    "editor.foreground": "#181818",
+    "editorCursor.foreground": "#0B57D0",
+    "editor.selectionBackground": "#D2E3FC",
+    "editor.lineHighlightBackground": "#F5F6F8",
+    "editorWhitespace.foreground": "#BFBFBF",
+    "editorLineNumber.foreground": "#8C8C8C",
+    "editorLineNumber.activeForeground": "#0B57D0"
+  }
+}

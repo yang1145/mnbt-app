@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  P2-C 组 C（网站监控 / 通知中心 / 一键部署）三个功能页的文案。
+  与 strings.xml / strings_site_a.xml 分开存放，避免与并行组互相覆盖；
+  路由注册与公共骨架由主控/本组 ui/ops 包自持。
+-->
+<resources>
+    <!-- 通用 -->
+    <string name="ops_back">返回</string>
+    <string name="ops_retry">重试</string>
+    <string name="ops_refresh">刷新</string>
+    <string name="ops_more">更多操作</string>
+    <string name="ops_cancel">取消</string>
+    <string name="ops_close">关闭</string>
+    <string name="ops_throttle_suffix">请 %1$d 秒后重试</string>
+
+    <!-- HostOutcome 整页状态（与组 A 同款语义，独立命名避免跨组耦合） -->
+    <string name="ops_repair_title">需要重新配对</string>
+    <string name="ops_repair_desc">当前站点的访问令牌已失效（本地凭据缺失或远端拒绝）。请返回主机列表重新扫码配对后再进入本页。</string>
+    <string name="ops_blocked_title">本页只读，无法操作</string>
+
+    <!-- 网站监控 -->
+    <string name="ops_monitor_title">网站监控</string>
+    <string name="ops_monitor_add_action">新增任务</string>
+    <string name="ops_monitor_add">新增监控任务</string>
+    <string name="ops_monitor_edit">编辑监控任务</string>
+    <string name="ops_monitor_form_save">保存</string>
+    <string name="ops_monitor_saved">监控任务已保存</string>
+    <string name="ops_monitor_deleted">监控任务已删除</string>
+    <string name="ops_monitor_enabled">已启用监控</string>
+    <string name="ops_monitor_disabled">已停用监控</string>
+    <string name="ops_monitor_task_max">最多 %1$d 个监控任务，已达上限，无法新增</string>
+    <string name="ops_monitor_limit_note">核心限制：每台主机最多 %1$d 个任务；URL 监控最小间隔 %2$d 秒；资源监控固定 %3$d 秒；URL 不允许指向内网。</string>
+    <string name="ops_monitor_empty_title">暂无监控任务</string>
+    <string name="ops_monitor_empty_desc">点右上角「+」新增 URL 可用性监控或资源监控任务。</string>
+    <string name="ops_monitor_action_enable">启用</string>
+    <string name="ops_monitor_action_disable">停用</string>
+    <string name="ops_monitor_action_logs">查看日志</string>
+    <string name="ops_monitor_action_edit">编辑</string>
+    <string name="ops_monitor_action_delete">删除</string>
+    <string name="ops_monitor_type_url">URL 监控</string>
+    <string name="ops_monitor_type_resource">资源监控</string>
+    <string name="ops_monitor_interval">%1$d 秒间隔</string>
+    <string name="ops_monitor_last_result">上次检测 %1$d</string>
+    <string name="ops_monitor_no_result">暂无检测结果</string>
+    <string name="ops_monitor_delete_title">确认删除监控任务？</string>
+    <string name="ops_monitor_delete_desc">删除「%1$s」后不可恢复，历史检测日志一并清除。</string>
+    <string name="ops_monitor_delete_confirm">删除</string>
+    <string name="ops_monitor_logs_title">检测日志 · %1$s</string>
+    <string name="ops_monitor_logs_empty">暂无检测记录</string>
+    <string name="ops_monitor_logs_count">共 %1$d 条记录</string>
+    <string name="ops_monitor_field_name">任务名称</string>
+    <string name="ops_monitor_field_type">监控类型</string>
+    <string name="ops_monitor_field_target">监控 URL</string>
+    <string name="ops_monitor_field_cycle">检测间隔（秒）</string>
+    <string name="ops_monitor_target_hint">不能指向内网地址（服务端会校验）</string>
+    <string name="ops_monitor_cycle_hint_url">最小间隔 %1$d 秒</string>
+    <string name="ops_monitor_cycle_hint_resource">资源监控固定 %1$d 秒，不可修改</string>
+    <string name="ops_monitor_name_required">任务名称不能为空</string>
+    <string name="ops_monitor_target_required">监控 URL 不能为空</string>
+    <string name="ops_monitor_target_invalid">URL 需以 http:// 或 https:// 开头</string>
+    <string name="ops_monitor_cycle_invalid">间隔需为不小于 %1$d 秒的整数</string>
+    <string name="ops_monitor_field_resource_target">监控资源</string>
+    <string name="ops_monitor_target_web">网页空间</string>
+    <string name="ops_monitor_target_sql">数据库空间</string>
+    <string name="ops_monitor_target_traffic">流量</string>
+    <string name="ops_monitor_resource_target_hint">面板的资源监控只有这三类，选中的类别名就是提交给服务端的 target。</string>
+
+    <!-- 通知中心 -->
+    <string name="ops_notice_title">通知中心</string>
+    <string name="ops_notice_summary">未读 %1$d · 共 %2$d 条</string>
+    <string name="ops_notice_empty_title">暂无通知</string>
+    <string name="ops_notice_empty_desc">站点目前没有推送给你的通知。</string>
+    <string name="ops_notice_marked">已标记为已读</string>
+    <string name="ops_notice_mark_all">全部标记已读</string>
+    <string name="ops_notice_marked_all">全部通知已标记为已读</string>
+
+    <!-- 一键部署 -->
+    <string name="ops_deploy_title">一键部署</string>
+    <string name="ops_deploy_empty_title">暂无可部署应用</string>
+    <string name="ops_deploy_empty_desc">站点端尚未配置部署程序。</string>
+    <string name="ops_deploy_same_site_note">应用图标与安装包均来自当前站点，无任何站外请求。</string>
+    <string name="ops_deploy_dir">安装目录 %1$s</string>
+    <string name="ops_deploy_action">部署</string>
+    <string name="ops_deploy_icon_alt">%1$s 图标</string>
+    <string name="ops_deploy_form_title">部署 · %1$s</string>
+    <string name="ops_deploy_form_load_failed">部署表单加载失败</string>
+    <string name="ops_deploy_form_dir">将部署到目录：%1$s</string>
+    <string name="ops_deploy_form_need_db">该应用需要关联数据库后才可部署</string>
+    <string name="ops_deploy_form_destructive">执行部署会先清空站点根目录的文件，再解包安装源码；中途不要关闭本页。</string>
+    <string name="ops_deploy_field_required_mark">＊必填</string>
+    <string name="ops_deploy_required_missing">以下必填项还没填写：%1$s</string>
+    <string name="ops_deploy_run">执行部署</string>
+    <string name="ops_deploy_running">部署执行中，请勿关闭…</string>
+    <string name="ops_deploy_confirm_desc">确认执行部署？站点根目录现有文件会被清除，此步不可撤销。</string>
+    <string name="ops_deploy_confirm_ok">确认执行</string>
+    <string name="ops_deploy_queued">部署已执行：%1$s</string>
+</resources>

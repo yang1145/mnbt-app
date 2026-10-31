@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  数据库管理页 + SQL 导入页文案（PRD §5.4 / §7.2，口径对齐 mobile_bridge §8 数据库组）。
+  与 strings.xml、strings_site_a.xml 分开存放，避免与并行开发组互相覆盖。
+-->
+<resources>
+    <!-- 通用骨架 -->
+    <string name="db_back">返回</string>
+    <string name="db_retry">重试</string>
+    <string name="db_cancel">取消</string>
+    <string name="db_close">关闭</string>
+    <string name="db_more">更多操作</string>
+    <string name="db_working">操作处理中…</string>
+
+    <!-- HostOutcome 整页形态 -->
+    <string name="db_repair_title">需要重新配对</string>
+    <string name="db_repair_desc">当前站点的访问令牌已失效（本地凭据缺失或远端拒绝）。请返回主机列表重新扫码配对后再进入本页。</string>
+    <string name="db_blocked_title">本页只读</string>
+    <string name="db_blocked_desc">该主机已到期、被封禁或面板关闭，数据库的备份、权限、清空与导入操作均不可用。</string>
+    <string name="db_need_repair_snackbar">令牌已失效，请返回主机列表重新扫码配对</string>
+
+    <!-- 数据库管理页（一主机一库：没有新建/删除数据库，只有备份的增删） -->
+    <string name="db_title">数据库</string>
+    <string name="db_refresh">刷新</string>
+    <string name="db_backup_now">立即备份</string>
+    <string name="db_delete_all">清空当前库的表</string>
+    <string name="db_empty_title">没有可用的数据库</string>
+    <string name="db_empty_desc">一台主机只有一个数据库，随主机开通自动创建，APP 无法新建或删除。若这里为空，说明该主机尚未开通数据库，请联系主机服务商。</string>
+    <string name="db_backup_quota_label">备份次数配额</string>
+    <string name="db_space_quota_label">数据库空间</string>
+    <string name="db_unit_times">次</string>
+    <string name="db_quota_value">已用 %1$s / 共 %2$s %3$s</string>
+    <string name="db_quota_value_unlimited">已用 %1$s %2$s · 总量不限</string>
+    <string name="db_username_value">用户：%1$s</string>
+    <string name="db_item_meta">字符集 %1$s · 状态 %2$s · 开通于 %3$s</string>
+    <string name="db_state_running">运行中</string>
+    <string name="db_state_unknown">未知</string>
+    <string name="db_backups_count">备份(%1$d)</string>
+    <string name="db_access">权限</string>
+    <string name="db_backup_empty">暂无备份文件，点右上角「立即备份」生成第一个</string>
+    <string name="db_backup_meta">%1$s · %2$s</string>
+    <string name="db_download">下载</string>
+    <string name="db_restore">恢复</string>
+
+    <!-- 删除备份文件（二次确认） -->
+    <string name="db_delete_backup">删除备份</string>
+    <string name="db_delete_backup_title">删除备份文件</string>
+    <string name="db_delete_backup_desc">备份「%1$s」删除后不可找回。数据库本身不受影响，确定删除这个备份文件吗？</string>
+    <string name="db_delete_confirm">删除</string>
+
+    <!-- 清空当前库的所有表（强确认） -->
+    <string name="db_delete_all_title">清空当前库的表</string>
+    <string name="db_delete_all_warning">该操作会删除当前数据库里的所有数据表且不可撤销，网站会因失去数据而无法访问。数据库账号和已有备份文件不受影响。请确认已备份后再继续。</string>
+    <string name="db_delete_all_ack">我已知晓风险：当前库的所有表将被清空</string>
+    <string name="db_delete_all_confirm">确认清空</string>
+    <string name="db_delete_all_done">已清空 %1$d 张表</string>
+
+    <!-- 访问权限 -->
+    <string name="db_access_dialog_title">访问权限 · %1$s</string>
+    <string name="db_access_local">仅本地访问</string>
+    <string name="db_access_local_desc">只允许本机（localhost）连接</string>
+    <string name="db_access_remote">允许远程访问</string>
+    <string name="db_access_remote_desc">允许从任意远程主机连接（%）</string>
+    <string name="db_access_port_note">端口由面板固定，不支持在此修改。</string>
+    <string name="db_access_apply">应用</string>
+    <string name="db_access_done">数据库 %1$s 的访问权限已设为%2$s</string>
+    <string name="db_access_mode_local">仅本地</string>
+    <string name="db_access_mode_remote">允许远程</string>
+
+    <!-- 备份恢复（危险，覆盖数据） -->
+    <string name="db_restore_dialog_title">用备份恢复数据库</string>
+    <string name="db_restore_dialog_desc">将用备份「%1$s」覆盖数据库「%2$s」，其中现有数据会全部丢失。确定恢复吗？</string>
+    <string name="db_restore_confirm">覆盖恢复</string>
+
+    <!-- SQL 导入页 -->
+    <string name="sql_title">导入 SQL</string>
+    <string name="sql_desc">选择目标数据库，再从本机选取 .sql 文件上传执行导入。大文件耗时较长，请勿退出页面。</string>
+    <string name="sql_db_label">目标数据库</string>
+    <string name="sql_no_db">当前主机没有可用数据库。数据库随主机开通产生，APP 侧无法新建，请联系主机服务商。</string>
+    <string name="sql_file_label">SQL 文件</string>
+    <string name="sql_no_file">尚未选择文件</string>
+    <string name="sql_pick_file">选取 .sql 文件</string>
+    <string name="sql_selected_file">已选：%1$s</string>
+    <string name="sql_warn_not_sql">所选文件不是 .sql 后缀，服务端可能拒绝导入。</string>
+    <string name="sql_import">上传并导入</string>
+    <string name="sql_uploading">正在上传导入…</string>
+    <string name="sql_contract_gap">整个文件一次性 multipart 上传，服务端没有导入进度与日志。SQL 很大时可能被面板拒绝（HTTP 413）；正规做法是先用文件管理把 .sql 分片传到站点目录，再让服务端按路径导入。</string>
+</resources>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- P2-B 主机列表实时版 + 主机详情页专用文案。通用 hosts_* 键在 strings.xml（禁改），此处只放新增键。 -->
+<resources>
+
+    <!-- 主机列表：健康总览条 -->
+    <string name="hosts_health_total">%1$d 台</string>
+    <string name="hosts_health_attention">%1$d 台需处理</string>
+    <string name="hosts_health_expiring">%1$d 台 30 天内到期</string>
+    <string name="hosts_health_expired">%1$d 台已到期</string>
+
+    <!-- 主机列表：行 -->
+    <string name="hosts_quota_space">空间</string>
+    <string name="hosts_quota_traffic">流量</string>
+    <string name="hosts_quota_database">数据库</string>
+    <string name="hosts_quota_percent">%1$d%%</string>
+    <string name="hosts_quota_unlimited">不限量</string>
+    <string name="hosts_row_quota_sep">·</string>
+    <string name="hosts_days_left">剩 %1$d 天</string>
+    <string name="hosts_expires_today">今天到期</string>
+    <string name="hosts_expired_days">已到期 %1$d 天</string>
+    <string name="hosts_expired">已到期</string>
+    <string name="hosts_needs_repair">需重新配对</string>
+    <string name="hosts_refresh_failed">刷新失败</string>
+    <string name="hosts_row_cd">查看主机 %1$s 详情</string>
+
+    <!-- 主机详情：sticky 头与菜单 -->
+    <string name="host_detail_back">返回</string>
+    <string name="host_detail_more">更多操作</string>
+    <string name="host_detail_action_refresh">刷新用量</string>
+    <string name="host_detail_action_rename">重命名</string>
+    <string name="host_detail_action_unbind">解绑</string>
+    <string name="host_detail_usage_expire_prefix">到期</string>
+
+    <!-- 主机详情：解绑二次确认 -->
+    <string name="host_detail_unbind_title">解绑该主机？</string>
+    <string name="host_detail_unbind_desc">将尝试在站点吊销本机令牌，并删除本地条目。之后需重新扫码才能添加。</string>
+    <string name="host_detail_unbind_confirm">解绑</string>
+
+    <!-- 主机详情：重命名 -->
+    <string name="host_detail_rename_title">重命名主机</string>
+    <string name="host_detail_rename_label">显示名称</string>
+    <string name="action_save">保存</string>
+    <string name="action_cancel">取消</string>
+
+    <!-- 主机详情：整页状态 -->
+    <string name="host_detail_repair_title">主机授权已失效</string>
+    <string name="host_detail_repair_desc">站点已拒绝当前令牌，所有写操作被封禁。请在站点「APP 绑定」页重新生成配对码后手动配对。</string>
+    <string name="host_detail_repair_action">前往重新配对</string>
+    <string name="host_detail_blocked_note">，写操作已禁用；下拉可重试</string>
+    <string name="host_detail_missing_title">主机条目不存在</string>
+    <string name="host_detail_missing_desc">该主机可能已被移除，请返回后重试。</string>
+
+    <!-- 主机详情：搜索 -->
+    <string name="host_detail_search_hint">搜索功能</string>
+    <string name="host_detail_search_empty">没有匹配的功能</string>
+    <string name="host_detail_no_usage">暂无用量数据，下拉刷新试试</string>
+
+    <!-- 分组标题（PRD §7.3） -->
+    <string name="host_group_site">站点运行</string>
+    <string name="host_group_files_data">文件数据</string>
+    <string name="host_group_domain_ssl">域名证书</string>
+    <string name="host_group_perf_cache">性能缓存</string>
+    <string name="host_group_monitor_deploy">监控部署</string>
+    <string name="host_group_account_security">账号安全</string>
+
+    <!-- 功能行名称（PRD §7.3，反向代理与索引配置已按产品决定移除） -->
+    <string name="feature_php">PHP 版本</string>
+    <string name="feature_rundir">运行目录</string>
+    <string name="feature_rewrite">伪静态</string>
+    <string name="feature_indexdoc">默认文档</string>
+    <string name="feature_files">文件管理</string>
+    <string name="feature_database">数据库</string>
+    <string name="feature_sql_import">导入 SQL</string>
+    <string name="feature_domains">绑定域名</string>
+    <string name="feature_ssl">SSL 证书</string>
+    <string name="feature_force_https">强制 HTTPS</string>
+    <string name="feature_gzip">Gzip 压缩</string>
+    <string name="feature_cache">缓存规则</string>
+    <string name="feature_hotlink">防盗链</string>
+    <string name="feature_monitor">监控任务</string>
+    <string name="feature_notice">通知</string>
+    <string name="feature_deploy">一键部署</string>
+    <string name="feature_passdir">密码访问目录</string>
+    <string name="feature_password">修改密码</string>
+
+    <!-- 行值文案 -->
+    <string name="value_on">开</string>
+    <string name="value_off">关</string>
+    <string name="value_dash">—</string>
+    <string name="value_days_left">剩 %1$d 天</string>
+    <string name="value_cert_expired">已过期</string>
+    <string name="value_domain_count">绑 %1$d 个</string>
+    <string name="value_cache_count">%1$d 条</string>
+    <string name="value_monitor_count">%1$d 个任务</string>
+    <string name="value_monitor_count_alerts">%1$d 个任务 · %2$d 告警</string>
+
+</resources>

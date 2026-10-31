@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  P2-C 组 D：域名管理页 + SSL 证书页文案（PRD §5.5 / §7.2）。
+  与 strings.xml 分开存放，避免与并行组互相覆盖。
+  前缀：domainssl_ 两页共用 / domains_ 域名页 / ssl_ SSL 页。
+-->
+<resources>
+    <!-- 共用：骨架与 LoadState 全分支 -->
+    <string name="domainssl_back">返回</string>
+    <string name="domainssl_retry">重试</string>
+    <string name="domainssl_cancel">取消</string>
+    <string name="domainssl_repair_title">需要重新配对</string>
+    <string name="domainssl_repair_desc">当前站点的访问令牌已失效（本地凭据缺失或远端拒绝）。请返回主机列表重新扫码配对后再进入本页。</string>
+    <string name="domainssl_token_repair_short">访问令牌已失效（本地凭据缺失或远端拒绝），本页已禁止写操作，请重新扫码配对。</string>
+    <string name="domainssl_retry_suffix">（约 %1$d 秒后可重试）</string>
+    <string name="domainssl_blocked_title">本页只读，无法操作</string>
+    <string name="domainssl_readonly_banner">主机当前为只读状态，写操作已被禁止。</string>
+
+    <!-- 域名页 -->
+    <string name="domains_title">域名管理</string>
+    <string name="domains_refresh">刷新域名列表</string>
+    <string name="domains_add">添加域名</string>
+    <string name="domains_delete">删除</string>
+    <string name="domains_empty_title">暂无绑定域名</string>
+    <string name="domains_empty_desc">为站点添加域名后，访客才能通过该域名访问网站。</string>
+    <string name="domains_main">主域名</string>
+    <string name="domains_addon">绑定域名</string>
+    <string name="domains_ssl_on">已启用 SSL</string>
+    <string name="domains_ssl_off">未启用 SSL</string>
+    <string name="domains_status_abnormal">状态异常</string>
+    <string name="domains_port_prefix">端口</string>
+    <string name="domains_dir_prefix">目录</string>
+    <string name="domains_quota_notice">已绑定 %1$d 个，本站上限 %2$d 个（超出上限需先删除闲置域名）。</string>
+    <string name="domains_hint_a_record">解析提示：请将域名的 A 记录指向 %1$s 后再添加，否则绑定成功也访问不通。</string>
+    <string name="domains_list_unexpected">域名列表返回了意外的成功响应</string>
+
+    <!-- 添加域名弹窗 -->
+    <string name="domainssl_add_empty">请输入域名</string>
+    <string name="domainssl_add_done">已添加 %1$s</string>
+    <string name="domainssl_add_quota">（已绑 %1$d/%2$d）</string>
+    <string name="domains_add_dialog_title">添加域名</string>
+    <string name="domains_domain_label">域名</string>
+    <string name="domains_domain_support">例如 sub.example.com，无需 http:// 前缀与路径</string>
+    <string name="domains_subdir_title">绑定子目录（可选）</string>
+    <string name="domains_subdir_none">不绑定子目录</string>
+    <string name="domains_subdir_loading">正在读取站点目录列表…</string>
+    <string name="domains_subdir_empty">站点暂无可选子目录</string>
+    <string name="domains_subdir_retry">重新加载目录列表</string>
+    <string name="domains_subdir_gap">候选目录取自站点运行目录；不选则按顶级域名绑定。</string>
+    <string name="domainssl_subdir_unexpected">目录列表返回了意外的成功响应</string>
+
+    <!-- 改前缀弹窗 -->
+    <string name="domains_edit_prefix">修改域名前缀</string>
+    <string name="domains_prefix_dialog_title">修改域名前缀</string>
+    <string name="domains_prefix_label">新前缀</string>
+    <string name="domains_prefix_support">1-24 位字母或数字，不含点号与空格</string>
+    <string name="domains_prefix_desc">将 %1$s 的第一段替换为新前缀，主域、端口与绑定目录保持不变。面板没有改名接口，实际操作是删除旧域名再添加新域名。</string>
+    <string name="domains_prefix_confirm">确定修改</string>
+    <string name="domains_prefix_invalid">前缀不合法：仅允许 1-24 位字母或数字</string>
+    <string name="domains_prefix_done">已将 %1$s 改为 %2$s</string>
+
+    <!-- 删除域名确认 -->
+    <string name="domainssl_del_done">已删除 %1$s</string>
+    <string name="domains_delete_dialog_title">删除域名</string>
+    <string name="domains_delete_dialog_desc">确定删除域名 %1$s 吗？删除后该域名将无法访问站点，此操作不可撤销。</string>
+    <string name="domains_delete_confirm">删除域名</string>
+
+    <!-- SSL 页 -->
+    <string name="ssl_title">SSL 证书</string>
+    <string name="ssl_refresh">刷新证书状态</string>
+    <string name="ssl_cert_card">当前证书</string>
+    <string name="ssl_no_cert">当前未部署证书</string>
+    <string name="ssl_no_cert_desc">申请 Let\'s Encrypt 证书或粘贴自定义证书均可启用 HTTPS。</string>
+    <string name="ssl_issuer">颁发机构</string>
+    <string name="ssl_domains">覆盖域名</string>
+    <string name="ssl_expire_at">到期时间</string>
+    <string name="ssl_days_left">剩余 %1$d 天</string>
+    <string name="ssl_expired">已过期</string>
+    <string name="ssl_days_unknown">到期日期无法解析：%1$s</string>
+    <string name="ssl_status_valid">证书有效</string>
+    <string name="ssl_status_warning">即将到期</string>
+
+    <string name="ssl_apply">申请证书</string>
+    <string name="ssl_renew">续签证书</string>
+    <string name="ssl_close">关闭 SSL</string>
+    <string name="ssl_apply_done">申请已提交</string>
+    <string name="ssl_renew_done">续签已提交</string>
+    <string name="ssl_close_done">已关闭 SSL</string>
+    <string name="ssl_done_expire">，到期时间 %1$s</string>
+    <string name="ssl_throttle_hint">申请/续签受服务端限流保护，失败时会提示建议重试时间。</string>
+    <string name="ssl_close_dialog_title">关闭 SSL</string>
+    <string name="ssl_close_dialog_desc">关闭后站点将退回 HTTP 提供服务，已部署的证书会被移除。确定关闭吗？</string>
+
+    <!-- 强制 HTTPS -->
+    <string name="ssl_force_card">强制 HTTPS</string>
+    <string name="ssl_force_desc">开启后 HTTP 访问自动跳转到 HTTPS。</string>
+    <string name="ssl_force_on">已开启强制 HTTPS</string>
+    <string name="ssl_force_off">已关闭强制 HTTPS</string>
+
+    <!-- 自定义证书 -->
+    <string name="ssl_custom_title">自定义证书</string>
+    <string name="ssl_custom_desc">粘贴 PEM 格式证书与对应私钥（也可从本地文件选择），两者需配对齐全后提交。</string>
+    <string name="ssl_pem_label">证书内容（PEM / crt）</string>
+    <string name="ssl_key_label">私钥内容（KEY）</string>
+    <string name="ssl_pem_placeholder">-----BEGIN CERTIFICATE-----</string>
+    <string name="ssl_key_placeholder">-----BEGIN PRIVATE KEY-----</string>
+    <string name="ssl_pick_file">从文件选择</string>
+    <string name="ssl_pick_failed">读取文件失败：%1$s</string>
+    <string name="ssl_pick_empty">无法打开所选文件</string>
+    <string name="ssl_custom_save">部署自定义证书</string>
+    <string name="ssl_custom_incomplete">证书内容与私钥均不能为空</string>
+    <string name="ssl_custom_done">自定义证书已提交</string>
+</resources>

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  P2-A 配对流程 + 主机/证书管理页新增文案。
+  strings.xml 属冻结文件，本分册独立维护；§9.2 / §9.3 两段为 PRD 原文，改动需同步 PRD。
+-->
+<resources>
+
+    <!-- 扫码页 -->
+    <string name="pair_back">返回</string>
+    <string name="pair_title_scan">扫码添加主机</string>
+    <string name="pair_scan_prompt">将二维码对准取景框</string>
+    <string name="pair_scan_viewfinder_desc">在站点网页面板「APP 绑定」页生成二维码后扫码。一台主机扫一次。</string>
+    <string name="pair_scan_action">打开相机扫码</string>
+    <string name="pair_manual_entry">手动输入</string>
+    <string name="pair_camera_denied">相机权限被拒绝，无法扫码。可重新发起授权，或改用手动输入。</string>
+    <string name="pair_working_probing">正在探测站点连接…</string>
+    <string name="pair_working_pairing">正在配对…</string>
+    <string name="pair_bound_title">绑定成功</string>
+    <string name="pair_bound_host">主机：%1$s</string>
+    <string name="pair_bound_redirect">即将打开主机详情</string>
+    <string name="pair_failed_retry">重试</string>
+    <string name="pair_failed_retry_in">约 %1$d 秒后可重试</string>
+
+    <!-- 手动配对页 -->
+    <string name="pair_title_manual">手动输入</string>
+    <string name="pair_manual_desc">填写站点地址与配对码。地址来自二维码链接，配对码来自网页面板「APP 绑定」页。</string>
+    <string name="pair_manual_site">站点地址</string>
+    <string name="pair_manual_site_placeholder">https://panel.example.com（不填协议默认按 https）</string>
+    <string name="pair_manual_code">配对码</string>
+    <string name="pair_manual_code_placeholder">8 位字符，120 秒内有效</string>
+    <string name="pair_manual_next">下一步</string>
+
+    <!-- 证书信任 / 明文警告页（§9.2 / §9.3） -->
+    <string name="pair_title_trust">证书信任</string>
+    <string name="pair_trust_site">站点地址</string>
+    <string name="pair_trust_reason_label">握手失败原因</string>
+    <string name="pair_trust_subject">证书主体</string>
+    <string name="pair_trust_issuer">颁发者</string>
+    <string name="pair_trust_valid_from">有效期起始</string>
+    <string name="pair_trust_valid_until">有效期截止</string>
+    <string name="pair_trust_fingerprint">SHA-256 指纹</string>
+    <string name="pair_trust_selfsigned">该证书为自签证书</string>
+    <string name="pair_trust_copy">复制</string>
+    <string name="pair_trust_confirm">信任并继续</string>
+    <string name="pair_trust_cancel">取消</string>
+    <!-- PRD §9.2 第 3 步核对风险原文 -->
+    <string name="pair_trust_risk">无法验证该证书的真实性。如果你不在该站点管理员所在的网络环境中，继续连接可能导致凭据被中间人截获。请与站点管理员核对指纹后再继续。</string>
+    <string name="pair_trust_plaintext_badge">未加密连接</string>
+    <!-- PRD §9.3 原句 -->
+    <string name="pair_trust_plaintext_warning">此站点使用未加密连接，你的密码与文件内容可被同网络下的任何人截获。</string>
+
+    <!-- 主机管理页 -->
+    <string name="hostmgmt_title">主机管理</string>
+    <string name="hostmgmt_created">添加于 %1$s</string>
+    <string name="hostmgmt_needs_repair">需重新配对</string>
+    <string name="hostmgmt_repair">重新配对</string>
+    <string name="hostmgmt_rename_desc">重命名</string>
+    <string name="hostmgmt_unbind_desc">解绑</string>
+    <string name="hostmgmt_cancel">取消</string>
+    <string name="hostmgmt_rename_title">重命名主机</string>
+    <string name="hostmgmt_rename_hint">为此主机起一个易识别的名字</string>
+    <string name="hostmgmt_rename_confirm">保存</string>
+    <string name="hostmgmt_unbind_title">解绑 %1$s？</string>
+    <string name="hostmgmt_unbind_body">将尝试在服务器上吊销本设备令牌，并删除本地条目；操作不可撤销，之后需重新扫码绑定。</string>
+    <string name="hostmgmt_unbind_confirm">解绑</string>
+
+    <!-- 证书信任管理页 -->
+    <string name="certmgmt_title">证书信任管理</string>
+    <string name="certmgmt_empty_title">没有已信任的证书</string>
+    <string name="certmgmt_empty_desc">只有在你手工确认过自签证书的站点上，这里才会有记录。</string>
+    <string name="certmgmt_pinned_at">确认于 %1$s</string>
+    <string name="certmgmt_copy_fingerprint">复制指纹</string>
+    <string name="certmgmt_revoke_trust">撤销信任</string>
+    <string name="certmgmt_revoke_title">撤销 %1$s 的信任？</string>
+    <string name="certmgmt_revoke_body">撤销后该主机条目保留，但下次连接恢复系统 CA 校验：若站点仍是自签证书，会重新进入证书信任页。</string>
+    <string name="certmgmt_revoke_confirm">撤销信任</string>
+</resources>

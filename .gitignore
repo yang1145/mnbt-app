@@ -1,0 +1,19 @@
+# Gradle（.gradle-home 为本机自定义 GRADLE_USER_HOME，缓存体积巨大）
+.gradle/
+.gradle-home/
+build/
+
+# IDE
+.idea/
+*.iml
+captures/
+
+# 本机配置（Android Studio 自动生成，含本机 SDK 路径）
+local.properties
+
+# Kotlin 编译缓存
+.kotlin/
+
+# 工具会话/临时目录
+.tmpx/
+.zcode/

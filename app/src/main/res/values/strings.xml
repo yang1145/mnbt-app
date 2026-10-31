@@ -1,0 +1,160 @@
+<resources>
+    <string name="app_name">MNBT 主机管理</string>
+
+    <string name="tab_hosts">主机</string>
+    <string name="tab_terminal">终端</string>
+    <string name="tab_cloud">云服务器</string>
+    <string name="tab_mine">我的</string>
+
+    <string name="hosts_scan">扫码添加主机</string>
+    <string name="hosts_empty_title">还没有主机</string>
+    <string name="hosts_empty_desc">在站点控制面板的「APP 绑定」页生成二维码，扫码即可添加。一台主机扫一次。</string>
+    <string name="hosts_empty_scan">扫码添加主机</string>
+    <string name="hosts_empty_manual">手动输入</string>
+    <string name="hosts_overview">共 %1$d 台</string>
+    <string name="hosts_overview_with_cleartext">共 %1$d 台 · %2$d 台未加密</string>
+    <string name="hosts_cleartext_badge">未加密</string>
+
+    <string name="terminal_new_session">新建会话</string>
+    <string name="terminal_edit_session">编辑会话</string>
+    <string name="terminal_empty_title">还没有 SSH 会话</string>
+    <string name="terminal_empty_desc">SSH 终端是独立工具，与扫码添加的主机互不相通，连接信息需自行填写。</string>
+
+    <!-- 云服务器 tab：列表与概览 -->
+    <string name="cloud_scan">扫码绑定站点</string>
+    <string name="cloud_empty_title">还没有绑定站点</string>
+    <string name="cloud_empty_desc">在智简魔方V10业务系统（ZJMF）「APP 绑定」页生成绑定二维码，扫码或手动输入即可绑定，站点下的云服务器会显示在这里。</string>
+    <string name="cloud_empty_scan">扫码绑定 ZJMF 站点</string>
+    <string name="cloud_empty_manual">手动输入</string>
+    <string name="cloud_health_total">共 %1$d 台</string>
+    <string name="cloud_health_running">%1$d 台运行中</string>
+    <string name="cloud_health_off">%1$d 台已关机</string>
+    <string name="cloud_health_other">%1$d 台其他状态</string>
+    <string name="cloud_site_servers">%1$d 台服务器</string>
+    <string name="cloud_site_empty">该站点下暂无服务器</string>
+    <string name="cloud_site_needs_repair">需重新绑定</string>
+    <string name="cloud_site_unbind">解绑</string>
+    <string name="cloud_unbind_title">解绑该站点？</string>
+    <string name="cloud_unbind_desc">将删除本机保存的站点凭据，站点下的云服务器不再显示。操作不可撤销，之后需重新扫码绑定。</string>
+    <string name="cloud_unbind_confirm">解绑</string>
+    <string name="cloud_unbind_failed">解绑失败</string>
+
+    <!-- 云服务器：电源状态与到期 -->
+    <string name="cloud_power_on">运行中</string>
+    <string name="cloud_power_off">已关机</string>
+    <string name="cloud_power_operating">操作中</string>
+    <string name="cloud_power_fault">故障</string>
+    <string name="cloud_due_date">到期 %1$s</string>
+    <string name="cloud_days_left">剩 %1$d 天</string>
+    <string name="cloud_due_today">今天到期</string>
+    <string name="cloud_due_expired">已到期</string>
+
+    <!-- 云服务器详情页 -->
+    <string name="cloud_back">返回</string>
+    <string name="cloud_detail_refresh">刷新状态</string>
+    <string name="cloud_detail_load_failed">加载失败</string>
+    <string name="cloud_detail_retry">重试</string>
+    <string name="cloud_detail_status_title">运行状态</string>
+    <string name="cloud_detail_info_title">产品信息</string>
+    <string name="cloud_detail_credential_title">登录凭据</string>
+    <string name="cloud_detail_config_title">配置信息</string>
+    <string name="cloud_detail_flow_title">流量用量</string>
+    <string name="cloud_detail_actions_title">电源操作</string>
+    <string name="cloud_field_host_status">主机状态</string>
+    <string name="cloud_field_product">产品名称</string>
+    <string name="cloud_field_main_ip">主 IP</string>
+    <string name="cloud_field_extra_ip">附加 IP</string>
+    <string name="cloud_field_os">操作系统</string>
+    <string name="cloud_field_due">到期时间</string>
+    <string name="cloud_field_billing">计费周期</string>
+    <string name="cloud_field_active">开通时间</string>
+    <string name="cloud_field_username">用户名</string>
+    <string name="cloud_field_password">密码</string>
+    <string name="cloud_field_port">端口</string>
+    <string name="cloud_copy">复制</string>
+    <string name="cloud_copied">已复制</string>
+    <string name="cloud_password_mask">••••••</string>
+
+    <!-- 云服务器：电源操作与确认 -->
+    <string name="cloud_action_power_on">开机</string>
+    <string name="cloud_action_power_off">关机</string>
+    <string name="cloud_action_reboot">重启</string>
+    <string name="cloud_action_hard_off">强制关机</string>
+    <string name="cloud_action_hard_reboot">强制重启</string>
+    <string name="cloud_action_vnc">VNC 控制台</string>
+    <string name="cloud_power_confirm_title">确认%1$s？</string>
+    <string name="cloud_power_confirm_desc">指令下发后，服务器状态更新可能有短暂延迟。</string>
+    <string name="cloud_power_hard_confirm_desc">强制操作相当于直接断电，可能造成数据丢失，请确认已保存所有工作。</string>
+    <string name="cloud_power_confirm">确认执行</string>
+    <string name="cloud_cancel">取消</string>
+    <string name="cloud_op_password_desc">该站点已开启操作密码校验，请输入操作密码后再执行。</string>
+    <string name="cloud_op_password_label">操作密码</string>
+    <string name="cloud_op_password_show">显示密码</string>
+    <string name="cloud_op_password_hide">隐藏密码</string>
+    <string name="cloud_power_dispatched">指令已下发</string>
+
+    <!-- 云服务器：流量与 VNC -->
+    <string name="cloud_flow_usage">%1$s / %2$s</string>
+    <string name="cloud_flow_unlimited">不限量</string>
+    <string name="cloud_flow_empty">暂无流量数据</string>
+    <string name="cloud_vnc_no_browser">未找到可以打开网页链接的浏览器</string>
+
+    <!-- 云服务器：扫码绑定流程 -->
+    <string name="cloud_pair_title_scan">扫码绑定站点</string>
+    <string name="cloud_pair_scan_prompt">将二维码对准取景框</string>
+    <string name="cloud_pair_scan_viewfinder_desc">在智简魔方V10业务系统（ZJMF）「APP 绑定」页生成绑定二维码后扫码。一个站点绑一次。</string>
+    <string name="cloud_pair_scan_action">打开相机扫码</string>
+    <string name="cloud_pair_manual_entry">手动输入</string>
+    <string name="cloud_pair_camera_denied">相机权限被拒绝，无法扫码。可重新发起授权，或改用手动输入。</string>
+    <string name="cloud_pair_invalid_qr">扫到的不是 ZJMF 站点绑定二维码，请使用财务系统「APP 绑定」页生成的二维码后重试。</string>
+    <string name="cloud_pair_failed_retry">重试</string>
+    <string name="cloud_pair_title_trust">绑定站点</string>
+    <string name="cloud_pair_trust_desc">填写站点地址与绑定码，确认后本设备将注册到该智简魔方V10业务系统站点。地址来自二维码链接，绑定码来自站点后台。</string>
+    <string name="cloud_pair_trust_site">站点地址</string>
+    <string name="cloud_pair_trust_site_placeholder">https://zjmf.example.com（不填协议默认按 https）</string>
+    <string name="cloud_pair_trust_code">绑定码</string>
+    <string name="cloud_pair_trust_code_placeholder">站点后台生成的绑定码</string>
+    <string name="cloud_pair_trust_device">设备名称</string>
+    <string name="cloud_pair_trust_device_hint">默认使用本机型号，可自行修改</string>
+    <string name="cloud_pair_trust_submit">确认绑定</string>
+    <string name="cloud_pair_trust_cancel">取消</string>
+    <string name="cloud_pair_working">正在绑定…</string>
+    <string name="cloud_pair_bound_toast">绑定成功</string>
+
+    <!-- 云站点管理页（我的 tab 二级页）：重命名复用绑定流程外的本地操作，解绑复用 cloud_unbind_* -->
+    <string name="cloudmgmt_title">云站点管理</string>
+    <string name="cloudmgmt_empty_title">还没有绑定云站点</string>
+    <string name="cloudmgmt_empty_desc">去「云服务器」tab 扫码绑定智简魔方V10业务系统站点，绑定的站点会显示在这里。</string>
+    <string name="cloudmgmt_paired_at">绑定于 %1$s</string>
+    <string name="cloudmgmt_repair">重新绑定</string>
+    <string name="cloudmgmt_rename_desc">重命名</string>
+    <string name="cloudmgmt_unbind_desc">解绑</string>
+    <string name="cloudmgmt_rename_title">重命名云站点</string>
+    <string name="cloudmgmt_rename_hint">为此站点起一个易识别的名字</string>
+    <string name="cloudmgmt_rename_confirm">保存</string>
+    <string name="cloudmgmt_unbind_title">解绑 %1$s？</string>
+    <string name="cloudmgmt_op_failed">操作失败</string>
+    <string name="cloudmgmt_error_confirm">知道了</string>
+
+    <string name="mine_hosts">主机管理</string>
+    <string name="mine_cloud_sites">云站点管理</string>
+    <string name="mine_certs">证书信任管理</string>
+    <string name="mine_appearance">外观</string>
+    <string name="mine_clear_cache">清除本地缓存</string>
+    <string name="mine_version">版本</string>
+    <string name="mine_licenses">开源许可声明</string>
+    <string name="mine_guest">未绑定主机</string>
+    <string name="mine_guest_desc">扫码绑定后这里显示站点账号信息</string>
+    <string name="mine_bound_at">绑定于 %1$s</string>
+    <string name="mine_plugin_version">插件 %1$s</string>
+    <string name="mine_repair_count">%1$d 台需要重新扫码配对</string>
+    <string name="mine_cleartext_count">%1$d 台走 http 明文</string>
+    <string name="mine_stat_hosts">主机</string>
+    <string name="mine_stat_cloud_sites">云站点</string>
+    <string name="mine_stat_ssh">SSH 配置</string>
+    <string name="mine_stat_repair">待修复</string>
+    <string name="mine_avatar_desc">账号首字母</string>
+    <string name="theme_follow_system">跟随系统</string>
+    <string name="theme_light">浅色</string>
+    <string name="theme_dark">深色</string>
+</resources>

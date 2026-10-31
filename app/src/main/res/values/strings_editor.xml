@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- P3 在线代码编辑器（ui/editor）专用文案。通用键 action_save / action_cancel /
+     host_detail_back 复用 strings_hosts.xml，此处禁止重复定义。 -->
+<resources>
+
+    <string name="editor_title">编辑文件</string>
+    <string name="editor_back">返回</string>
+    <string name="editor_retry">重试</string>
+    <string name="editor_loading">正在读取文件…</string>
+
+    <!-- 顶栏编码标记 -->
+    <string name="editor_charset_switch">切换编码</string>
+
+    <!-- 大文件护栏 -->
+    <string name="editor_bigfile_title">文件较大，确定打开？</string>
+    <string name="editor_bigfile_desc">该文件约 %1$s MB，超过 1 MB。移动端编辑大文件可能明显卡顿、耗电，且保存需完整回传内容。</string>
+    <string name="editor_bigfile_confirm">仍要打开</string>
+    <string name="editor_bigfile_cancel">返回</string>
+
+    <!-- 未保存离开 -->
+    <string name="editor_discard_title">有未保存的修改</string>
+    <string name="editor_discard_desc">离开将丢失本次编辑内容，且不会保存到站点。</string>
+    <string name="editor_discard_giveup">放弃修改</string>
+    <string name="editor_discard_keep">继续编辑</string>
+
+    <!-- 编码切换 -->
+    <string name="editor_charset_title">按 %1$s 重新解码？</string>
+    <string name="editor_charset_desc">将以 %1$s 编码重新解读服务端返回的原始字节。当前有未保存修改：修改文本会保留，但保存时将按新编码回写，可能改变原有字节内容，请确认后再保存。</string>
+    <string name="editor_charset_clean_desc">将以 %1$s 编码重新解读服务端返回的原始字节，当前无未保存修改，可安全切换。</string>
+    <string name="editor_charset_confirm">切换</string>
+
+    <!-- 只读与保护 -->
+    <string name="editor_blocked_readonly">主机已到期或被封禁，文件仅供只读查看，写操作已被站点拒绝。</string>
+    <string name="editor_save_blocked_readonly">保存被站点拒绝（主机到期/封禁），编辑器已切换为只读。</string>
+    <string name="editor_userini_notice">该文件受核心保护（.user.ini 禁止修改），保存会被站点拒绝（code 1009），错误将原样显示。</string>
+
+    <!-- 保存反馈 -->
+    <string name="editor_saved">已保存到站点</string>
+    <string name="editor_saving">保存中…</string>
+    <string name="editor_save_failed">保存失败</string>
+    <string name="editor_protocol_raw_prefix">服务器原始响应：</string>
+
+    <!-- 加载失败 -->
+    <string name="editor_load_failed">读取文件失败</string>
+    <string name="editor_repair_desc">站点已拒绝当前令牌，无法读取或保存文件。请在站点「APP 绑定」页重新配对。</string>
+    <string name="editor_grammar_failed">语法高亮初始化失败，编辑器以纯文本方式打开（不影响读写）。</string>
+
+</resources>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- P2-D 三组站点设置页（密码访问目录 / 修改主机密码 / 缓存规则）专用字符串。
+     与 strings.xml 分离：并行任务 SiteA 组也新增字符串，分文件避免合并冲突。 -->
+<resources>
+    <!-- 通用 -->
+    <string name="site_b_back">返回</string>
+    <string name="site_b_add">添加</string>
+    <string name="site_b_delete">删除</string>
+    <string name="site_b_cancel">取消</string>
+    <string name="site_b_save">保存</string>
+    <string name="site_b_retry">重试</string>
+    <string name="site_b_show">显示</string>
+    <string name="site_b_hide">隐藏</string>
+    <string name="site_b_load_failed">加载失败</string>
+    <string name="site_b_repair_title">令牌已失效</string>
+    <string name="site_b_repair_desc">当前主机令牌被站点拒绝或本地已丢失。请到站点控制面板「APP 绑定」页重新生成二维码并扫码配对。</string>
+    <string name="site_b_repair_action">去重新扫码</string>
+    <string name="site_b_blocked_readonly">该主机已到期或被封禁，本页仅可查看，写操作已禁用。</string>
+
+    <!-- 密码访问目录 -->
+    <string name="site_b_passdir_title">密码访问目录</string>
+    <string name="site_b_passdir_account">保护账号：%1$s</string>
+    <string name="site_b_passdir_empty_title">暂无密码保护目录</string>
+    <string name="site_b_passdir_empty_desc">添加后，访问该目录需要输入下方设置的账号与密码。</string>
+    <string name="site_b_passdir_add_first">添加第一个目录</string>
+    <string name="site_b_passdir_add_title">添加密码保护目录</string>
+    <string name="site_b_passdir_dir_label">目录</string>
+    <string name="site_b_passdir_dir_placeholder">如 /private</string>
+    <string name="site_b_passdir_user_label">账号</string>
+    <string name="site_b_passdir_pass_label">密码</string>
+    <string name="site_b_passdir_add_confirm">添加目录</string>
+    <string name="site_b_passdir_delete_title">删除密码保护目录</string>
+    <string name="site_b_passdir_delete_message">即将取消 %1$s 的密码保护，操作不可撤销。</string>
+    <string name="site_b_passdir_added">已添加，列表已刷新</string>
+    <string name="site_b_passdir_deleted">已删除</string>
+    <string name="site_b_err_dir_required">请输入目录</string>
+    <string name="site_b_err_dir_slash">目录必须以 / 开头（站点根目录相对路径）</string>
+    <string name="site_b_err_user_required">请输入保护账号</string>
+    <string name="site_b_err_pass_required">请输入密码</string>
+
+    <!-- 修改主机密码 -->
+    <string name="site_b_password_title">修改主机密码</string>
+    <string name="site_b_password_hint">新密码会同时用于该主机的 FTP 与数据库账号；口令不回显、也不进面板日志。以上是只改不读，面板不再下发任何明文凭证。</string>
+    <string name="site_b_password_account">账号</string>
+    <string name="site_b_password_new">新密码</string>
+    <string name="site_b_password_confirm">确认新密码</string>
+    <string name="site_b_password_submit">保存新密码</string>
+    <string name="site_b_password_changed">密码已修改</string>
+    <string name="site_b_err_password_empty">请输入新密码</string>
+    <string name="site_b_err_password_short">密码至少 %1$d 位</string>
+    <string name="site_b_err_password_confirm_empty">请再次输入新密码</string>
+    <string name="site_b_err_password_mismatch">两次输入的密码不一致</string>
+
+    <!-- 缓存规则 -->
+    <string name="site_b_cache_title">缓存规则</string>
+    <string name="site_b_cache_empty_title">暂无缓存规则</string>
+    <string name="site_b_cache_empty_desc">添加规则后，命中该后缀的响应会按设定秒数缓存。</string>
+    <string name="site_b_cache_add_first">添加第一条规则</string>
+    <string name="site_b_cache_edit_title">编辑缓存规则</string>
+    <string name="site_b_cache_add_title">添加缓存规则</string>
+    <string name="site_b_cache_seconds">%1$d 秒</string>
+    <string name="site_b_cache_suffix_label">缓存后缀</string>
+    <string name="site_b_cache_suffix_placeholder">如 jpg，多个用逗号分隔（css,js）</string>
+    <string name="site_b_cache_type_note">类型由后缀自动判定（页面 / 图片 / 文件），无需选择。</string>
+    <string name="site_b_cache_type_page">页面</string>
+    <string name="site_b_cache_type_image">图片</string>
+    <string name="site_b_cache_type_file">文件</string>
+    <string name="site_b_cache_seconds_label">缓存时长（秒）</string>
+    <string name="site_b_cache_seconds_placeholder">如 3600</string>
+    <string name="site_b_cache_delete_title">删除缓存规则</string>
+    <string name="site_b_cache_delete_message">即将删除缓存规则 %1$s，操作不可撤销。</string>
+    <string name="site_b_cache_added">已添加，列表已刷新</string>
+    <string name="site_b_cache_saved">已保存，列表已刷新</string>
+    <string name="site_b_cache_deleted">已删除</string>
+    <string name="site_b_cache_stale">规则列表已变化，请刷新后重试</string>
+    <string name="site_b_err_suffix_required">请输入缓存后缀</string>
+    <string name="site_b_err_suffix_slash">后缀不含 /（这里填的是文件后缀，不是路径）</string>
+    <string name="site_b_err_seconds_required">请输入缓存时长</string>
+    <string name="site_b_err_seconds_positive">缓存时长需为大于 0 的整数秒</string>
+</resources>

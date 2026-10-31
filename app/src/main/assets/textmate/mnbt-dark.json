@@ -1,0 +1,86 @@
+{
+  "name": "MNBT Dark",
+  "type": "dark",
+  "tokenColors": [
+    {
+      "settings": {
+        "foreground": "#E6E6E6",
+        "background": "#1E2025"
+      }
+    },
+    {
+      "name": "Comment",
+      "scope": ["comment", "punctuation.definition.comment"],
+      "settings": {
+        "fontStyle": "italic",
+        "foreground": "#6F7379"
+      }
+    },
+    {
+      "name": "Keyword",
+      "scope": ["keyword", "keyword.control", "storage.type", "storage.modifier"],
+      "settings": {
+        "foreground": "#A8C7FA"
+      }
+    },
+    {
+      "name": "String",
+      "scope": ["string", "punctuation.definition.string"],
+      "settings": {
+        "foreground": "#4CC38A"
+      }
+    },
+    {
+      "name": "Number",
+      "scope": ["constant.numeric", "constant.language"],
+      "settings": {
+        "foreground": "#F0954A"
+      }
+    },
+    {
+      "name": "Function",
+      "scope": ["entity.name.function", "support.function"],
+      "settings": {
+        "foreground": "#A8C7FA"
+      }
+    },
+    {
+      "name": "Type / Class",
+      "scope": ["entity.name.type", "entity.other.inherited-class", "support.class"],
+      "settings": {
+        "foreground": "#A0A4AB"
+      }
+    },
+    {
+      "name": "Variable",
+      "scope": ["variable", "variable.other", "punctuation.definition.variable"],
+      "settings": {
+        "foreground": "#F2726B"
+      }
+    },
+    {
+      "name": "Operator / Punctuation",
+      "scope": ["keyword.operator", "punctuation"],
+      "settings": {
+        "foreground": "#A0A4AB"
+      }
+    },
+    {
+      "name": "Tag",
+      "scope": ["entity.name.tag", "punctuation.definition.tag"],
+      "settings": {
+        "foreground": "#A8C7FA"
+      }
+    }
+  ],
+  "colors": {
+    "editor.background": "#1E2025",
+    "editor.foreground": "#E6E6E6",
+    "editorCursor.foreground": "#A8C7FA",
+    "editor.selectionBackground": "#062E6F",
+    "editor.lineHighlightBackground": "#111318",
+    "editorWhitespace.foreground": "#3A3D42",
+    "editorLineNumber.foreground": "#6F7379",
+    "editorLineNumber.activeForeground": "#A8C7FA"
+  }
+}

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- SSH 会话编辑页 + SSH 终端页（终端 tab 二级页）的全部中文文案。 -->
+<resources>
+
+    <!-- 会话编辑页 -->
+    <string name="ssh_edit_new_title">新建 SSH 会话</string>
+    <string name="ssh_edit_title">编辑 SSH 会话</string>
+    <string name="ssh_back">返回</string>
+    <string name="ssh_field_label">名称</string>
+    <string name="ssh_field_label_placeholder">例如：公司生产机</string>
+    <string name="ssh_field_host">主机地址</string>
+    <string name="ssh_field_host_placeholder">IP 或域名，如 203.0.113.10</string>
+    <string name="ssh_field_port">端口</string>
+    <string name="ssh_field_port_placeholder">默认 22</string>
+    <string name="ssh_field_username">用户名</string>
+    <string name="ssh_field_username_placeholder">如 root 或部署用户</string>
+    <string name="ssh_auth_method">认证方式</string>
+    <string name="ssh_auth_password">密码</string>
+    <string name="ssh_auth_key">私钥</string>
+    <string name="ssh_field_password">密码</string>
+    <string name="ssh_field_password_placeholder">服务器登录密码</string>
+    <string name="ssh_password_saved">已保存密码，输入新值可覆盖</string>
+    <string name="ssh_show">显示</string>
+    <string name="ssh_hide">隐藏</string>
+    <string name="ssh_private_key">私钥</string>
+    <string name="ssh_import_key">导入私钥（PEM/OpenSSH 文本）</string>
+    <string name="ssh_key_imported">已导入：%1$s（%2$d 字符）</string>
+    <string name="ssh_key_saved">已保存的私钥不回显，导入新文件可覆盖</string>
+    <string name="ssh_key_none">尚未导入私钥</string>
+    <string name="ssh_passphrase">私钥口令</string>
+    <string name="ssh_passphrase_placeholder">私钥已加密时必填</string>
+    <string name="ssh_passphrase_saved">已保存口令，输入新值可覆盖</string>
+    <string name="ssh_host_key">主机密钥指纹</string>
+    <string name="ssh_host_key_pending">首次连接时确认</string>
+    <string name="ssh_host_key_note">确认信任后 APP 记录该指纹；服务器公钥变化时连接会被拦截并告警。</string>
+    <string name="ssh_save">保存</string>
+    <string name="ssh_delete_session">删除会话</string>
+    <string name="ssh_delete_confirm_title">删除该会话？</string>
+    <string name="ssh_delete_confirm_message">将同时删除已保存的密码、私钥与主机密钥指纹，并断开该会话的活动连接，无法恢复。</string>
+    <string name="ssh_delete_confirm">删除</string>
+    <string name="ssh_cancel">取消</string>
+    <string name="ssh_missing_config">连接配置不存在，可能已被删除</string>
+
+    <!-- 终端页 -->
+    <string name="ssh_terminal_connecting">正在建立 SSH 连接…</string>
+    <string name="ssh_terminal_waiting_trust">等待你确认服务器身份…</string>
+    <string name="ssh_terminal_retry">重试</string>
+    <string name="ssh_terminal_end_session">结束会话</string>
+    <string name="ssh_terminal_end_confirm_title">结束该 SSH 会话？</string>
+    <string name="ssh_terminal_end_confirm_message">会关闭远端 shell 并断开连接；仅返回上一页不会断开会话，切回来可立即续用。</string>
+    <string name="ssh_terminal_ended">远程会话已结束</string>
+    <string name="ssh_terminal_font_decrease">缩小字号</string>
+    <string name="ssh_terminal_font_increase">放大字号</string>
+    <string name="ssh_terminal_keyboard">键盘</string>
+    <string name="ssh_terminal_keyboard_desc">呼出或收起软键盘</string>
+
+    <!-- TOFU 首次信任 -->
+    <string name="ssh_trust_title">确认服务器身份</string>
+    <string name="ssh_trust_intro">首次连接 %1$s:%2$d，服务器出示了公钥。请与服务器管理员核对下面的指纹后再信任；指纹不一致时继续连接可能遭到中间人攻击。</string>
+    <string name="ssh_trust_algorithm">算法</string>
+    <string name="ssh_trust_fingerprint">指纹</string>
+    <string name="ssh_trust_confirm">信任并继续</string>
+
+    <!-- 公钥变更告警 -->
+    <string name="ssh_key_changed_title">服务器公钥已变化</string>
+    <string name="ssh_key_changed_warning">当前服务器出示的公钥与首次连接时记录的不一致。如果服务器没有重装过系统或更换过主机密钥，请立即取消并排查中间人攻击。</string>
+    <string name="ssh_key_changed_expected">记录：%1$s</string>
+    <string name="ssh_key_changed_actual">当前：%1$s</string>
+    <string name="ssh_key_changed_replace">确认更换，更新信任并重连</string>
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  平台层只信任系统 CA。
+  用户手工确认过的自签证书不进这里，而是由 OkHttp 的自定义 X509TrustManager
+  按主机维度做 SHA-256 指纹校验（见 net/trust/）。这样做的原因：
+  把用户证书塞进系统信任锚会让 APP 内所有请求（包括未来可能的第三方域名）
+  都无条件信任它，范围过宽。
+
+  cleartextTrafficPermitted=true 是产品决策：MNBT 客户自建站点大量跑在裸 HTTP 上，
+  禁掉等于 APP 对这部分客户不可用。风险由 UI 层的红色强提示承担。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

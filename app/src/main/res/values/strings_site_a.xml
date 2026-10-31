@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  P2-C 组 A：站点设置六个功能页（PHP 版本 / 运行目录 / 默认文档 / 伪静态 /
+  Gzip / 防盗链）的文案。
+  与 strings.xml 分开存放，避免与并行组（passdir/password/cache）互相覆盖。
+-->
+<resources>
+    <!-- 通用 -->
+    <string name="sitea_save">保存</string>
+    <string name="sitea_saving">保存中…</string>
+    <string name="sitea_saved">已保存</string>
+    <string name="sitea_retry">重试</string>
+    <string name="sitea_back">返回</string>
+    <string name="sitea_required_empty">该项不能为空</string>
+
+    <!-- HostOutcome 各状态引导 -->
+    <string name="sitea_repair_title">需要重新配对</string>
+    <string name="sitea_repair_desc">当前站点的访问令牌已失效（本地凭据缺失或远端拒绝）。请返回主机列表重新扫码配对后再进入本页。</string>
+    <string name="sitea_blocked_title">本页只读，无法保存</string>
+    <string name="sitea_blocked_desc">该主机已到期、被封禁或面板关闭，本页只读，无法保存任何修改。</string>
+
+    <!-- PHP 版本 -->
+    <string name="sitea_php_title">PHP 版本</string>
+    <string name="sitea_php_desc">选择站点当前使用的 PHP 版本，切换后立即生效。</string>
+    <string name="sitea_php_options_empty">未获取到可选版本</string>
+
+    <!-- 运行目录 -->
+    <string name="sitea_rundir_title">运行目录</string>
+    <string name="sitea_rundir_desc">指定站点实际提供服务的目录（网站根目录下的子目录）。</string>
+    <string name="sitea_rundir_guard">运行目录的禁删、禁止留空等保护由服务端判定，操作失败时会原样返回提示。</string>
+
+    <!-- 默认文档 -->
+    <string name="sitea_indexdoc_title">默认文档</string>
+    <string name="sitea_indexdoc_desc">以英文逗号分隔，按书写顺序匹配。例如 index.php,index.html,index.htm。</string>
+    <string name="sitea_indexdoc_label">默认文档列表</string>
+
+    <!-- 伪静态 -->
+    <string name="sitea_rewrite_title">伪静态</string>
+    <string name="sitea_rewrite_desc">先点选模板查看对应规则内容，确认无误后应用该模板。</string>
+    <string name="sitea_rewrite_templates_label">规则模板</string>
+    <string name="sitea_rewrite_code_label">规则内容</string>
+    <string name="sitea_rewrite_code_empty">请选择模板以加载规则内容。</string>
+
+    <!-- Gzip -->
+    <string name="sitea_gzip_title">Gzip 压缩</string>
+    <string name="sitea_gzip_desc">开启后站点静态资源以 Gzip 压缩传输。</string>
+    <string name="sitea_gzip_on">开启</string>
+    <string name="sitea_gzip_off">关闭</string>
+
+    <!-- 防盗链 -->
+    <string name="sitea_hotlink_title">防盗链</string>
+    <string name="sitea_hotlink_desc">限制引用本站资源的来源与有效期。</string>
+    <string name="sitea_hotlink_switch">启用防盗链</string>
+    <string name="sitea_hotlink_domains_label">允许的来源域名</string>
+    <string name="sitea_hotlink_domains_support">多个域名以逗号或竖线分隔，例如 *.example.com</string>
+    <string name="sitea_hotlink_exts_label">受保护文件后缀</string>
+    <string name="sitea_hotlink_exts_support">多个后缀以竖线分隔，例如 jpg|png|gif</string>
+    <string name="sitea_hotlink_lasts_label">防盗链有效时长（秒）</string>
+</resources>
