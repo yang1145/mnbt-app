@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MNBT 主机管理</string>
+    <string name="app_name">智能云管</string>
 
     <string name="tab_hosts">主机</string>
     <string name="tab_terminal">终端</string>
