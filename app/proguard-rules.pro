@@ -103,6 +103,21 @@
 -dontwarn javax.annotation.**
 
 # ---------------------------------------------------------------------------
+# 依赖库的编译期引用（assembleRelease 时 R8 报缺失，规则取自 AGP 生成的
+# app/build/outputs/mapping/release/missing_rules.txt）：
+# j2objc 注解由 Guava 引入，java.beans 是 Guava/MINA 的编译期引用，
+# 两者在 Android 运行时都不存在，-dontwarn 即可（AGP 官方指引）。
+# ---------------------------------------------------------------------------
+-dontwarn com.google.j2objc.annotations.ReflectionSupport
+-dontwarn com.google.j2objc.annotations.RetainedWith
+-dontwarn com.google.j2objc.annotations.Weak
+-dontwarn java.beans.BeanInfo
+-dontwarn java.beans.FeatureDescriptor
+-dontwarn java.beans.IntrospectionException
+-dontwarn java.beans.Introspector
+-dontwarn java.beans.PropertyDescriptor
+
+# ---------------------------------------------------------------------------
 # 逃生舱：如果 release 包在真机上出现 ClassNotFoundException /
 # NoSuchAlgorithmException（几乎只会来自 MINA SSHD 的工厂装配），
 # 先打开下面这一条确认是不是 keep 规则漏了，再回去补精确规则。
