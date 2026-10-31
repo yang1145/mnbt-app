@@ -17,8 +17,8 @@ android {
         // 26：MINA SSHD 依赖 java.time / java.nio.file 类型，低于 26 会在运行期 NoClassDefFoundError。
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
