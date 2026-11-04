@@ -60,6 +60,7 @@ import com.mnbt.app.R
 import com.mnbt.app.domain.model.CloudFlowItem
 import com.mnbt.app.domain.model.CloudPowerAction
 import com.mnbt.app.domain.model.CloudServerDetail
+import com.mnbt.app.domain.model.CloudSiteCapabilities
 import com.mnbt.app.ui.common.LoadState
 import com.mnbt.app.ui.common.mnbtViewModel
 import com.mnbt.app.ui.components.AppCard
@@ -73,6 +74,8 @@ import com.mnbt.app.ui.theme.LocalAppPalette
  *
  * 六个区块：状态卡（电源大字 + 手动刷新）、产品信息、登录凭据（密码打码 + 复制）、
  * 配置文本、流量用量（自绘细进度条）、电源操作按钮组 + VNC。
+ * 区块显隐按站点能力协商（协议 §6）：credentials/config_text/flow/vnc/hard_power
+ * 未声明的能力整块隐藏。
  * 电源操作：确认对话框（强制类危险色文案）→ 需要时先输操作密码 → 失败留在对话框
  * 可改密码重试，成功 toast「指令已下发」并轮询刷新状态卡。
  */
@@ -158,10 +161,12 @@ fun CloudServerDetailScreen(
                     SectionTitle(stringResource(R.string.cloud_detail_info_title))
                     InfoCard(data.detail.summary.dueTimeEpochMs, data.detail)
 
-                    SectionTitle(stringResource(R.string.cloud_detail_credential_title))
-                    CredentialCard(data.detail)
+                    if (data.capabilities.credentials) {
+                        SectionTitle(stringResource(R.string.cloud_detail_credential_title))
+                        CredentialCard(data.detail)
+                    }
 
-                    if (!data.detail.configText.isNullOrBlank()) {
+                    if (data.capabilities.configText && !data.detail.configText.isNullOrBlank()) {
                         SectionTitle(stringResource(R.string.cloud_detail_config_title))
                         AppCard {
                             Text(
@@ -172,11 +177,14 @@ fun CloudServerDetailScreen(
                         }
                     }
 
-                    SectionTitle(stringResource(R.string.cloud_detail_flow_title))
-                    FlowCard(data.flows)
+                    if (data.capabilities.flow) {
+                        SectionTitle(stringResource(R.string.cloud_detail_flow_title))
+                        FlowCard(data.flows)
+                    }
 
                     SectionTitle(stringResource(R.string.cloud_detail_actions_title))
                     ActionsCard(
+                        capabilities = data.capabilities,
                         onAction = { action ->
                             passwordText = ""
                             passwordVisible = false
@@ -518,59 +526,55 @@ private fun FlowLine(item: CloudFlowItem) {
     }
 }
 
-/** ⑥ 操作区：常规操作实心按钮，强制操作 1px 边 + 危险色文字，VNC 与强制重启同行。 */
+/**
+ * ⑥ 操作区：常规操作实心按钮，强制操作 1px 边 + 危险色文字。
+ * 按站点能力组装（协议 §6）：hard_power 未声明隐藏两个强制按钮，vnc 未声明隐藏 VNC；
+ * 可见按钮按每行两个自适应排布。
+ */
 @Composable
-private fun ActionsCard(onAction: (CloudPowerAction) -> Unit, onVnc: () -> Unit) {
+private fun ActionsCard(
+    capabilities: CloudSiteCapabilities,
+    onAction: (CloudPowerAction) -> Unit,
+    onVnc: () -> Unit,
+) {
+    data class Entry(val label: String, val danger: Boolean, val onClick: () -> Unit)
+
+    val entries = buildList {
+        add(Entry(stringResource(R.string.cloud_action_power_on), false) { onAction(CloudPowerAction.ON) })
+        add(Entry(stringResource(R.string.cloud_action_power_off), false) { onAction(CloudPowerAction.OFF) })
+        add(Entry(stringResource(R.string.cloud_action_reboot), false) { onAction(CloudPowerAction.REBOOT) })
+        if (capabilities.hardPower) {
+            add(Entry(stringResource(R.string.cloud_action_hard_off), true) { onAction(CloudPowerAction.HARD_OFF) })
+            add(Entry(stringResource(R.string.cloud_action_hard_reboot), true) {
+                onAction(CloudPowerAction.HARD_REBOOT)
+            })
+        }
+        if (capabilities.vnc) {
+            add(Entry(stringResource(R.string.cloud_action_vnc), false, onClick = onVnc))
+        }
+    }
+
     AppCard {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ActionButton(
-                label = stringResource(R.string.cloud_action_power_on),
-                danger = false,
-                modifier = Modifier.weight(1f),
-            ) { onAction(CloudPowerAction.ON) }
-            ActionButton(
-                label = stringResource(R.string.cloud_action_power_off),
-                danger = false,
-                modifier = Modifier.weight(1f),
-            ) { onAction(CloudPowerAction.OFF) }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ActionButton(
-                label = stringResource(R.string.cloud_action_reboot),
-                danger = false,
-                modifier = Modifier.weight(1f),
-            ) { onAction(CloudPowerAction.REBOOT) }
-            ActionButton(
-                label = stringResource(R.string.cloud_action_hard_off),
-                danger = true,
-                modifier = Modifier.weight(1f),
-            ) { onAction(CloudPowerAction.HARD_OFF) }
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ActionButton(
-                label = stringResource(R.string.cloud_action_hard_reboot),
-                danger = true,
-                modifier = Modifier.weight(1f),
-            ) { onAction(CloudPowerAction.HARD_REBOOT) }
-            ActionButton(
-                label = stringResource(R.string.cloud_action_vnc),
-                danger = false,
-                modifier = Modifier.weight(1f),
-                onClick = onVnc,
-            )
+        entries.chunked(2).forEachIndexed { rowIndex, rowEntries ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = if (rowIndex == 0) 0.dp else 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                rowEntries.forEach { entry ->
+                    ActionButton(
+                        label = entry.label,
+                        danger = entry.danger,
+                        modifier = Modifier.weight(1f),
+                        onClick = entry.onClick,
+                    )
+                }
+                // 末行单按钮时补一个空位占宽，避免最后一个按钮被拉满整行
+                repeat(2 - rowEntries.size) {
+                    Spacer(modifier = Modifier.weight(1f))
+                }
+            }
         }
     }
 }

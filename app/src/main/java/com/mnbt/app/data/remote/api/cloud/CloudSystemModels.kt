@@ -1,55 +1,70 @@
-package com.mnbt.app.data.remote.api.zjmf
+package com.mnbt.app.data.remote.api.cloud
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** ZJMF-CBAP 调用失败。UI 直接展示 [message]（服务端中文文案优先）；[status] 为 HTTP 码或包络 status。 */
-class ZjmfException(val status: Int, val msg: String, val errorCode: String? = null) : Exception(msg)
+/**
+ * 「MNBT 云开放协议 v2」（docs/cloud-integration.md）的 DTO 集合。
+ * 命名系统无关：协议对任何云业务系统（ZJMF / WHMCS / 自研面板…）一视同仁，
+ * 服务商系统专属概念不允许出现在这里。
+ */
+
+/** 协议调用失败。UI 直接展示 [message]（服务端中文文案优先）；[status] 为 HTTP 码或包络 status。 */
+class CloudSystemException(val status: Int, val msg: String, val errorCode: String? = null) : Exception(msg)
 
 /** POST mnbt/bind 的 data */
 @Serializable
-data class ZjmfBindData(
+data class CloudBindData(
     val jwt: String,
     @SerialName("expires_in") val expiresIn: Long = 0,
     @SerialName("site_name") val siteName: String? = null,
+    /** 协议版本（v2 实现恒为 2）；缺省视为 2（宽容实现） */
+    val proto: Int? = null,
+    /** 能力清单（§6）；缺省视为全能力 */
+    val capabilities: List<String>? = null,
 )
 
-/** POST mnbt/refresh 的 data：addon 签发的设备令牌（30 天滑动续期） */
+/** POST mnbt/refresh 的 data：设备令牌（30 天滑动续期） */
 @Serializable
-data class ZjmfTokenData(
+data class CloudTokenData(
     val jwt: String,
     @SerialName("expires_in") val expiresIn: Long = 0,
 )
 
 /** GET mnbt/config 的 data */
 @Serializable
-data class ZjmfConfigData(
+data class CloudConfigData(
     @SerialName("site_name") val siteName: String,
     @SerialName("operate_password_required") val operatePasswordRequired: Boolean = false,
+    val proto: Int? = null,
+    val capabilities: List<String>? = null,
 )
 
-/** addon addition 里的登录凭据（可能只给其中一部分） */
+/** addition 里的登录凭据（可能只给其中一部分；能力 `credentials`） */
 @Serializable
-data class ZjmfServerAddition(
+data class CloudServerAddition(
     val username: String? = null,
     val password: String? = null,
     val port: Int? = null,
 )
 
 /**
- * 云服务器条目。列表（契约 4）、详情（契约 5）共用同一个形状：
+ * 云服务器条目。列表（§5.5）、详情（§5.6）共用同一个形状：
  * 详情端点只是比列表多 assign_ip / os / addition / client_notes / config_text。
  */
 @Serializable
-data class ZjmfCloudServer(
+data class CloudServerDto(
     val id: Int,
     val name: String? = null,
     @SerialName("product_name") val productName: String? = null,
 
-    /** 主机业务状态（Active / Suspended …），ZJMF host 表口径 */
+    /** 业务状态（Active / Suspended …），服务商系统原值，APP 原样展示 */
     val status: String? = null,
 
-    /** 模块直连路由用："mf_cloud" | "remf_cloud" */
+    /**
+     * v2 不再要求（v1 的模块直连路由已废除）。服务商可能仍下发，仅作展示元数据保留，
+     * APP 不据此路由任何请求。
+     */
     val module: String? = null,
 
     /** 电源状态：on / off / operating / pending / suspend / fault / unknown */
@@ -58,38 +73,34 @@ data class ZjmfCloudServer(
 
     @SerialName("dedicate_ip") val dedicateIp: String? = null,
 
-    /** ISO8601 或秒/毫秒时间戳字符串，由 [ZjmfTime.parseEpochMs] 统一转 epochMs */
+    /** ISO8601 或秒/毫秒时间戳字符串，由 [CloudTime.parseEpochMs] 统一转 epochMs */
     @SerialName("due_time") val dueTime: String? = null,
     @SerialName("billing_cycle_name") val billingCycleName: String? = null,
     @SerialName("active_time") val activeTime: String? = null,
 
-    // ---- 以下字段仅详情端点（契约 5）返回 ----
+    // ---- 以下字段仅详情端点（§5.6）返回 ----
     @SerialName("assign_ip") val assignIp: String? = null,
     val os: String? = null,
-    val addition: ZjmfServerAddition? = null,
+    val addition: CloudServerAddition? = null,
     @SerialName("client_notes") val clientNotes: String? = null,
 
-    /** 服务端预格式化的配置文本，UI 原样展示 */
+    /** 服务端预格式化的配置文本，UI 原样展示（能力 `config_text`） */
     @SerialName("config_text") val configText: String? = null,
 )
 
 @Serializable
-data class ZjmfCloudServersData(val list: List<ZjmfCloudServer> = emptyList())
+data class CloudServersData(val list: List<CloudServerDto> = emptyList())
 
 @Serializable
-data class ZjmfCloudServerDetailData(val server: ZjmfCloudServer)
+data class CloudServerDetailData(val server: CloudServerDto)
 
-/** GET {module}/{id}/status 的 data。status 声明为可空：模块探测只认「有 status 字段」为命中。 */
+/** POST mnbt/cloud/server/{id}/vnc 的 data。url 可能为相对路径，由仓库层拼站点根归一化。 */
 @Serializable
-data class ZjmfModuleStatusData(val status: String? = null, val desc: String? = null)
+data class CloudVncData(val url: String)
 
-/** POST {module}/{id}/vnc 的 data。url 可能为相对路径，由仓库层拼站点根归一化。 */
+/** 流量条目（能力 `flow`，§5.7 归一化口径）。 */
 @Serializable
-data class ZjmfVncData(val url: String)
-
-/** 流量条目。addon 归一化端点（契约 6）与模块回退端点（契约 10）共用。 */
-@Serializable
-data class ZjmfFlowItem(
+data class CloudFlowEntry(
     val name: String? = null,
     val used: Double = 0.0,
     val total: Double? = null,
@@ -97,13 +108,13 @@ data class ZjmfFlowItem(
 )
 
 @Serializable
-data class ZjmfFlowData(val list: List<ZjmfFlowItem> = emptyList())
+data class CloudFlowData(val list: List<CloudFlowEntry> = emptyList())
 
 /**
- * ZJMF 各接口的时间字段口径不一（ISO8601、秒时间戳、毫秒时间戳字符串），
+ * 服务端时间字段口径不一（ISO8601、秒时间戳、毫秒时间戳字符串），
  * 统一收敛为 epoch 毫秒；解析失败一律返回 null，调用方按「未知」渲染，不要猜。
  */
-object ZjmfTime {
+object CloudTime {
 
     fun parseEpochMs(raw: String?): Long? {
         val text = raw?.trim().orEmpty()

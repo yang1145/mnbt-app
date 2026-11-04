@@ -3,8 +3,8 @@ package com.mnbt.app.domain.repo
 import com.mnbt.app.data.local.db.CloudSiteDao
 import com.mnbt.app.data.local.db.CloudSiteEntity
 import com.mnbt.app.data.local.secure.TokenVault
-import com.mnbt.app.data.remote.api.zjmf.ZjmfClient
-import com.mnbt.app.data.remote.api.zjmf.ZjmfException
+import com.mnbt.app.data.remote.api.cloud.CloudSystemClient
+import com.mnbt.app.data.remote.api.cloud.CloudSystemException
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -38,7 +38,7 @@ internal suspend inline fun <T> asResult(block: () -> T): Result<T> = try {
 internal class CloudAuth(
     private val dao: CloudSiteDao,
     private val vault: TokenVault,
-    private val client: ZjmfClient,
+    private val client: CloudSystemClient,
 ) {
 
     /** 并发的 401 恢复只允许一个协程真正调 refresh，其余等锁后复用新令牌。 */
@@ -60,20 +60,20 @@ internal class CloudAuth(
     suspend fun <T> call(siteId: Long, block: suspend (Credential) -> T): T {
         val cred = credential(siteId) ?: run {
             markNeedsRepair(siteId)
-            throw ZjmfException(401, CLOUD_LOGIN_EXPIRED)
+            throw CloudSystemException(401, CLOUD_LOGIN_EXPIRED)
         }
         return try {
             block(cred)
-        } catch (first: ZjmfException) {
+        } catch (first: CloudSystemException) {
             if (first.status != 401) throw first
 
             val refreshed = recoverAfter401(siteId, cred)
             try {
                 block(refreshed)
-            } catch (second: ZjmfException) {
+            } catch (second: CloudSystemException) {
                 if (second.status == 401) {
                     markNeedsRepair(siteId)
-                    throw ZjmfException(401, CLOUD_LOGIN_EXPIRED, second.errorCode)
+                    throw CloudSystemException(401, CLOUD_LOGIN_EXPIRED, second.errorCode)
                 }
                 throw second
             }
@@ -95,9 +95,9 @@ internal class CloudAuth(
             } else {
                 try {
                     refreshAndStore(latest ?: stale)
-                } catch (e: ZjmfException) {
+                } catch (e: CloudSystemException) {
                     markNeedsRepair(siteId)
-                    throw ZjmfException(401, CLOUD_LOGIN_EXPIRED, e.errorCode)
+                    throw CloudSystemException(401, CLOUD_LOGIN_EXPIRED, e.errorCode)
                 }
             }
         }

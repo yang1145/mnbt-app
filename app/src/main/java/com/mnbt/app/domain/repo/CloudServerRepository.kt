@@ -2,10 +2,10 @@ package com.mnbt.app.domain.repo
 
 import com.mnbt.app.data.local.db.CloudSiteDao
 import com.mnbt.app.data.local.secure.TokenVault
-import com.mnbt.app.data.remote.api.zjmf.ZjmfClient
-import com.mnbt.app.data.remote.api.zjmf.ZjmfCloudServer
-import com.mnbt.app.data.remote.api.zjmf.ZjmfException
-import com.mnbt.app.data.remote.api.zjmf.ZjmfTime
+import com.mnbt.app.data.remote.api.cloud.CloudSystemClient
+import com.mnbt.app.data.remote.api.cloud.CloudSystemException
+import com.mnbt.app.data.remote.api.cloud.CloudServerDto
+import com.mnbt.app.data.remote.api.cloud.CloudTime
 import com.mnbt.app.domain.model.CloudFlowItem
 import com.mnbt.app.domain.model.CloudPowerAction
 import com.mnbt.app.domain.model.CloudServerDetail
@@ -22,27 +22,23 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.concurrent.ConcurrentHashMap
 
 /**
  * 云服务器的读取与操作入口。列表数据是「Room 站点 × 内存快照」的组合：
  * 快照只在 [refresh] 成功后更新，冷启动/断网时 UI 拿到的是最近一次的稳定数据。
  *
- * 模块名（mf_cloud / remf_cloud）决定了电源/状态/VNC 的直连路由前缀，
- * 三级缓存：内存 per-host → 站点级 moduleHint（Room）→ 现场探测。
+ * 协议 v2：电源/VNC/流量全部走 `mnbt/cloud/server/{id}/...` 统一路由，无模块路由与探测；
+ * 状态轮询复用详情端点。统一端点 404 = 服务商插件未升级到 v2，映射为升级引导文案。
  */
 class CloudServerRepository(
     private val cloudSiteDao: CloudSiteDao,
     private val vault: TokenVault,
-    private val client: ZjmfClient,
+    private val client: CloudSystemClient,
 ) {
 
     private val auth = CloudAuth(cloudSiteDao, vault, client)
 
     private val serversState = MutableStateFlow<List<CloudServerSummary>>(emptyList())
-
-    /** hostId → module 的内存缓存，refresh/detail/探测命中后回填 */
-    private val moduleCache = ConcurrentHashMap<Long, String>()
 
     private val refreshMutex = Mutex()
 
@@ -73,14 +69,13 @@ class CloudServerRepository(
                             serversState.update { current ->
                                 current.filterNot { it.siteId == site.id } + summaries
                             }
-                            summaries.forEach { rememberModule(site.id, it.hostId, it.module) }
                             if (site.status != CloudSiteStatus.ACTIVE.name) {
                                 cloudSiteDao.updateStatus(site.id, CloudSiteStatus.ACTIVE.name)
                             }
                         } catch (e: CancellationException) {
                             throw e
                         } catch (e: Exception) {
-                            if (e is ZjmfException && e.status == 401) {
+                            if (e is CloudSystemException && e.status == 401) {
                                 serversState.update { current ->
                                     current.filterNot { it.siteId == site.id }
                                 }
@@ -98,7 +93,6 @@ class CloudServerRepository(
             client.cloudServerDetail(cred.site.baseUrl, cred.token, hostId)
         }
         val server = data.server
-        rememberModule(siteId, hostId, server.module)
         CloudServerDetail(
             summary = server.toSummary(siteId),
             assignIp = server.assignIp,
@@ -112,9 +106,9 @@ class CloudServerRepository(
     }
 
     /**
-     * 电源操作。module 从缓存取（找不到现场探测）；operatePassword 由 UI 按站点
-     * config.operate_password_required 决定传不传。失败原样包进 failure（含
-     * ZjmfException，UI 展示 msg 并允许用户改密码重试）。
+     * 电源操作。operatePassword 由 UI 按站点 config.operate_password_required 决定传不传。
+     * 失败原样包进 failure（含 CloudSystemException，UI 展示 msg 并允许用户改密码重试）。
+     * 统一端点 404 = 服务商插件还是 v1（无该路由），映射为升级引导。
      */
     suspend fun power(
         siteId: Long,
@@ -130,88 +124,56 @@ class CloudServerRepository(
             CloudPowerAction.HARD_REBOOT -> "hard_reboot"
         }
         auth.call(siteId) { cred ->
-            val module = resolveModule(cred, hostId)
-            client.modulePower(cred.site.baseUrl, cred.token, module, hostId, func, operatePassword)
+            try {
+                client.power(cred.site.baseUrl, cred.token, hostId, func, operatePassword)
+            } catch (e: CloudSystemException) {
+                throw if (isLegacy404(e)) legacyException(e) else e
+            }
         }
         Unit
     }
 
-    /** 返回 (status, desc)，与模块直连 status 端点的 data 对应。 */
+    /**
+     * 状态轮询：协议 v2 无独立 status 端点，复用详情端点取实时电源状态。
+     * 返回 (powerStatus, powerDesc)。
+     */
     suspend fun status(siteId: Long, hostId: Long): Result<Pair<String, String>> = asResult {
-        auth.call(siteId) { cred ->
-            val module = resolveModule(cred, hostId)
-            val data = client.moduleStatus(cred.site.baseUrl, cred.token, module, hostId)
-            (data.status.orEmpty()) to (data.desc.orEmpty())
+        val data = auth.call(siteId) { cred ->
+            client.cloudServerDetail(cred.site.baseUrl, cred.token, hostId)
         }
+        (data.server.powerStatus.orEmpty()) to (data.server.powerDesc.orEmpty())
     }
 
-    /** 返回绝对 URL：data.url 不以 http 开头时拼站点根。 */
+    /** 返回绝对 URL：data.url 不以 http 开头时拼站点根。统一端点 404 映射为升级引导。 */
     suspend fun vnc(siteId: Long, hostId: Long): Result<String> = asResult {
         auth.call(siteId) { cred ->
-            val module = resolveModule(cred, hostId)
-            val data = client.moduleVnc(cred.site.baseUrl, cred.token, module, hostId)
+            val data = try {
+                client.vnc(cred.site.baseUrl, cred.token, hostId)
+            } catch (e: CloudSystemException) {
+                throw if (isLegacy404(e)) legacyException(e) else e
+            }
             normalizeVncUrl(cred.site.baseUrl, data.url)
         }
     }
 
-    /**
-     * 流量：先走 addon 归一化端点（契约 6）；端点 404（未部署该版本 addon）时
-     * 回退到模块直连 flow 端点的尽力解析（契约 10）。
-     */
+    /** 归一化流量（§5.7，能力 `flow`）。v1 的模块回退端点已废除。 */
     suspend fun flow(siteId: Long, hostId: Long): Result<List<CloudFlowItem>> = asResult {
         auth.call(siteId) { cred ->
-            try {
-                client.addonFlow(cred.site.baseUrl, cred.token, hostId).list.map { it.toDomain() }
-            } catch (e: ZjmfException) {
-                if (e.status != 404) throw e
-                val module = resolveModule(cred, hostId)
-                client.moduleFlow(cred.site.baseUrl, cred.token, module, hostId).map { it.toDomain() }
-            }
+            client.flow(cred.site.baseUrl, cred.token, hostId).list.map { it.toDomain() }
         }
     }
 
-    // ---- 模块探测 ----
+    // ---- 内部工具 ----
 
     /**
-     * 对候选 [moduleHint, "mf_cloud", "remf_cloud"] 依次试
-     * `GET {module}/{id}/status`，包络 200 且 data 有 status 字段即命中；
-     * 胜者写内存 per-host 缓存 + 站点级 moduleHint。令牌 401 直接上抛，
-     * 让外层 CloudAuth 走 refresh-重试，而不是误判成「模块未找到」。
+     * 电源/VNC 是 v2 新增统一端点：v1 插件站点（未升级）会得到 404，
+     * 此时不该报「接口不存在」这种没头绪的错，而是给出明确的升级引导。
      */
-    private suspend fun resolveModule(cred: CloudAuth.Credential, hostId: Long): String {
-        moduleCache[hostId]?.let { return it }
+    private fun isLegacy404(e: CloudSystemException): Boolean =
+        e.status == 404 || e.errorCode == "legacy_protocol"
 
-        val candidates = listOfNotNull(
-            cred.site.moduleHint?.takeIf { it.isNotBlank() },
-            "mf_cloud",
-            "remf_cloud",
-        ).distinct()
-
-        for (module in candidates) {
-            val probe = runCatching {
-                client.moduleStatus(cred.site.baseUrl, cred.token, module, hostId)
-            }
-            val status = probe.getOrNull()?.status
-            if (!status.isNullOrBlank()) {
-                moduleCache[hostId] = module
-                if (cred.site.moduleHint != module) cloudSiteDao.updateModuleHint(cred.site.id, module)
-                return module
-            }
-            val err = probe.exceptionOrNull()
-            if (err is ZjmfException && err.status == 401) throw err
-        }
-        throw ZjmfException(
-            0,
-            "无法确定云服务器的模块类型（已尝试 ${candidates.joinToString("/")}），请刷新列表后重试",
-        )
-    }
-
-    private suspend fun rememberModule(siteId: Long, hostId: Long, module: String?) {
-        val m = module?.takeIf { it.isNotBlank() } ?: return
-        moduleCache[hostId] = m
-        val site = cloudSiteDao.getById(siteId) ?: return
-        if (site.moduleHint != m) cloudSiteDao.updateModuleHint(siteId, m)
-    }
+    private fun legacyException(e: CloudSystemException): CloudSystemException =
+        CloudSystemException(0, LEGACY_PROTOCOL_MESSAGE, "legacy_protocol")
 
     private fun normalizeVncUrl(baseUrl: String, url: String): String {
         val trimmed = url.trim()
@@ -220,7 +182,7 @@ class CloudServerRepository(
         return if (trimmed.startsWith("/")) base + trimmed else "$base/$trimmed"
     }
 
-    private fun ZjmfCloudServer.toSummary(siteId: Long): CloudServerSummary = CloudServerSummary(
+    private fun CloudServerDto.toSummary(siteId: Long): CloudServerSummary = CloudServerSummary(
         siteId = siteId,
         hostId = id.toLong(),
         name = name.orEmpty(),
@@ -230,12 +192,12 @@ class CloudServerRepository(
         powerStatus = powerStatus.orEmpty(),
         powerDesc = powerDesc.orEmpty(),
         dedicateIp = dedicateIp,
-        dueTimeEpochMs = ZjmfTime.parseEpochMs(dueTime),
+        dueTimeEpochMs = CloudTime.parseEpochMs(dueTime),
         billingCycleName = billingCycleName,
-        activeTimeEpochMs = ZjmfTime.parseEpochMs(activeTime),
+        activeTimeEpochMs = CloudTime.parseEpochMs(activeTime),
     )
 
-    private fun com.mnbt.app.data.remote.api.zjmf.ZjmfFlowItem.toDomain(): CloudFlowItem =
+    private fun com.mnbt.app.data.remote.api.cloud.CloudFlowEntry.toDomain(): CloudFlowItem =
         CloudFlowItem(
             name = name ?: "流量",
             used = used,

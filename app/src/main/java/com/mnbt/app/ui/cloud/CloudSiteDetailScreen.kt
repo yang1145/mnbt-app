@@ -155,6 +155,14 @@ private fun SiteInfoCard(site: CloudSite) {
                 color = palette.textSecondary,
                 modifier = Modifier.padding(top = 6.dp),
             )
+            if (site.systemType.isNotBlank()) {
+                Text(
+                    text = stringResource(R.string.cloudsite_system_type, site.systemType),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = palette.textSecondary,
+                    modifier = Modifier.padding(top = 2.dp),
+                )
+            }
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 10.dp),

@@ -39,16 +39,19 @@ import com.mnbt.app.ui.theme.LocalAppPalette
 import kotlinx.coroutines.delay
 
 /**
- * 云站点绑定页（route：Destinations.CLOUD_PAIR_TRUST，base/code 走 query，手动入口空参进来）。
+ * 云站点绑定页（route：Destinations.CLOUD_PAIR_TRUST，base/code/systemType 走 query，
+ * 手动入口空参进来）。
  *
  * 展示站点地址（可编辑）+ 绑定码（可编辑）+ 设备名（默认本机型号，对齐 MNBT 配对
  * device_name 约定，可改）。「确认绑定」调 pairSite；成功 toast 后 popBack 回云服务器
  * tab（popUpTo 整条 cloud/pair 栈），失败原因直接展示在页内可改可重试。
+ * [Destinations.trustQuerySystemType] 来自二维码 type 字段，改地址重试时保留。
  */
 @Composable
 fun CloudPairTrustScreen(navController: NavController, entry: NavBackStackEntry) {
     val base = Destinations.trustQueryBase(entry)
     val code = Destinations.trustQueryCode(entry)
+    val systemType = Destinations.trustQuerySystemType(entry)
     val palette = LocalAppPalette.current
     val context = LocalContext.current
     val vm: CloudPairViewModel = mnbtViewModel { c, _ -> CloudPairViewModel(c) }
@@ -123,14 +126,14 @@ fun CloudPairTrustScreen(navController: NavController, entry: NavBackStackEntry)
                 )
                 is CloudPairState.Failed -> CloudPairFailedCard(
                     message = s.message,
-                    onRetry = { vm.pair(baseText, codeText, deviceText) },
+                    onRetry = { vm.pair(baseText, codeText, deviceText, systemType) },
                 )
                 else -> Unit
             }
         }
 
         Button(
-            onClick = { vm.pair(baseText, codeText, deviceText) },
+            onClick = { vm.pair(baseText, codeText, deviceText, systemType) },
             enabled = !busy && baseText.isNotBlank() && codeText.isNotBlank(),
             shape = AppCorner.Control,
             modifier = Modifier

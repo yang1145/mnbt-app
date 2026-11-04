@@ -27,8 +27,8 @@ interface CloudSiteDao {
     @Query("UPDATE cloud_sites SET status = :status WHERE id = :id")
     suspend fun updateStatus(id: Long, status: String)
 
-    @Query("UPDATE cloud_sites SET module_hint = :moduleHint WHERE id = :id")
-    suspend fun updateModuleHint(id: Long, moduleHint: String?)
+    @Query("UPDATE cloud_sites SET capabilities_json = :capabilitiesJson WHERE id = :id")
+    suspend fun updateCapabilities(id: Long, capabilitiesJson: String?)
 
     @Query("UPDATE cloud_sites SET name = :name WHERE id = :id")
     suspend fun updateName(id: Long, name: String)

@@ -27,7 +27,9 @@ object Destinations {
 
     // 云服务器：绑定流程与详情（复用 ARG_BASE / ARG_CODE；siteId、hostId 均 LongType）
     const val CLOUD_PAIR_SCAN = "cloud/pair/scan"
-    const val CLOUD_PAIR_TRUST = "cloud/pair/trust?$ARG_BASE={$ARG_BASE}&$ARG_CODE={$ARG_CODE}"
+    const val ARG_SYSTEM_TYPE = "systemType"
+    const val CLOUD_PAIR_TRUST =
+        "cloud/pair/trust?$ARG_BASE={$ARG_BASE}&$ARG_CODE={$ARG_CODE}&$ARG_SYSTEM_TYPE={$ARG_SYSTEM_TYPE}"
     const val ARG_SITE_ID = "siteId"
     // {hostId} 一律 LongType（主机详情与云服务器详情共用参数名）
     const val ARG_HOST_ID = "hostId"
@@ -77,9 +79,13 @@ object Destinations {
     fun pairTrustRoute(base: String, code: String): String =
         "pair/trust?base=${Uri.encode(base)}&code=${Uri.encode(code)}"
 
-    /** 云站点绑定信任页：同 pairTrustRoute，base/code 走 query 并 URL 编码 */
-    fun cloudPairTrustRoute(base: String, code: String): String =
-        "cloud/pair/trust?base=${Uri.encode(base)}&code=${Uri.encode(code)}"
+    /**
+     * 云站点绑定信任页：同 pairTrustRoute，base/code/systemType 走 query 并 URL 编码。
+     * [systemType] 为二维码 type 字段（服务商系统标识，v2 起 type 不再限定 zjmf）；手输为空串。
+     */
+    fun cloudPairTrustRoute(base: String, code: String, systemType: String = ""): String =
+        "cloud/pair/trust?base=${Uri.encode(base)}&code=${Uri.encode(code)}" +
+            "&systemType=${Uri.encode(systemType)}"
 
     fun editorRoute(hostId: Long, path: String): String =
         "editor?hostId=$hostId&path=${Uri.encode(path)}"
@@ -89,6 +95,10 @@ object Destinations {
 
     fun trustQueryCode(entry: NavBackStackEntry): String =
         entry.arguments?.getString(ARG_CODE).orEmpty()
+
+    /** 云站点二维码里的服务商系统标识（type 字段）；手输绑定为空串。 */
+    fun trustQuerySystemType(entry: NavBackStackEntry): String =
+        entry.arguments?.getString(ARG_SYSTEM_TYPE).orEmpty()
 
     /** {hostId} 参数在每条 host 子路由上都要注册，集中写一次。 */
     fun hostIdArg() = navArgument(ARG_HOST_ID) { type = NavType.LongType }

@@ -6,6 +6,7 @@ import com.mnbt.app.AppContainer
 import com.mnbt.app.domain.model.CloudFlowItem
 import com.mnbt.app.domain.model.CloudPowerAction
 import com.mnbt.app.domain.model.CloudServerDetail
+import com.mnbt.app.domain.model.CloudSiteCapabilities
 import com.mnbt.app.ui.common.LoadState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,8 @@ data class CloudDetailUi(
     val powerDesc: String,
     val operatePasswordRequired: Boolean,
     val flows: List<CloudFlowItem>?,
+    /** 站点能力协商结果，驱动电源按钮/VNC/流量/凭据/配置卡的显隐 */
+    val capabilities: CloudSiteCapabilities,
 )
 
 class CloudServerDetailViewModel(
@@ -67,7 +70,7 @@ class CloudServerDetailViewModel(
     }
 
     /**
-     * 首次整页加载：详情 + 站点配置（operatePasswordRequired）+ 流量。
+     * 首次整页加载：详情 + 站点配置（operatePasswordRequired + capabilities）+ 流量。
      * 详情失败整页 Failed（message 为服务端中文文案）；配置/流量失败降级，不挡整页。
      */
     fun loadAll() {
@@ -88,6 +91,7 @@ class CloudServerDetailViewModel(
                     powerDesc = detail.summary.powerDesc,
                     operatePasswordRequired = config?.operatePasswordRequired ?: false,
                     flows = flows,
+                    capabilities = config?.capabilities ?: CloudSiteCapabilities.FULL,
                 ),
             )
         }

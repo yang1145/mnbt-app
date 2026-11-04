@@ -17,3 +17,9 @@ local.properties
 # 工具会话/临时目录
 .tmpx/
 .zcode/
+
+# mock server 运行时沙箱（server.mjs 启动时自动重建种子文件，勿跟踪）
+tools/mock/.sandbox/
+
+# 本机 release 构建产物（apk/baselineProfiles，正式产物走 CI 或手动分发）
+app/release/

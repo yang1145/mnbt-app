@@ -8,7 +8,7 @@ import com.mnbt.app.data.local.db.HostDao
 import com.mnbt.app.data.local.db.SshSessionDao
 import com.mnbt.app.data.local.secure.TokenVault
 import com.mnbt.app.data.remote.api.MnbtClient
-import com.mnbt.app.data.remote.api.zjmf.ZjmfClient
+import com.mnbt.app.data.remote.api.cloud.CloudSystemClient
 import com.mnbt.app.data.remote.http.DeviceInfo
 import com.mnbt.app.data.remote.http.HostHttpClientFactory
 import com.mnbt.app.domain.repo.CloudServerRepository
@@ -55,15 +55,15 @@ class AppContainer(context: Context) {
 
     val client: MnbtClient by lazy { MnbtClient(clientFactory, device) }
 
-    /** ZJMF-CBAP（云站点）通信入口，与 [client] 共用连接池，系统 CA 信任、无 pinning。 */
-    val zjmfClient: ZjmfClient by lazy { ZjmfClient(clientFactory, device) }
+    /** 云开放协议 v2（云站点）通信入口，与 [client] 共用连接池，系统 CA 信任、无 pinning。 */
+    val cloudSystemClient: CloudSystemClient by lazy { CloudSystemClient(clientFactory, device) }
 
     val hostRepository: HostRepository by lazy { HostRepository(hostDao, vault, client) }
 
-    val cloudSiteRepository: CloudSiteRepository by lazy { CloudSiteRepository(cloudSiteDao, vault, zjmfClient) }
+    val cloudSiteRepository: CloudSiteRepository by lazy { CloudSiteRepository(cloudSiteDao, vault, cloudSystemClient) }
 
     val cloudServerRepository: CloudServerRepository by lazy {
-        CloudServerRepository(cloudSiteDao, vault, zjmfClient)
+        CloudServerRepository(cloudSiteDao, vault, cloudSystemClient)
     }
 
     val hostSync: HostSync by lazy { HostSync(this) }

@@ -23,7 +23,7 @@
     <!-- 云服务器 tab：列表与概览 -->
     <string name="cloud_scan">扫码绑定站点</string>
     <string name="cloud_empty_title">还没有绑定站点</string>
-    <string name="cloud_empty_desc">在智简魔方V10业务系统「APP 绑定」页生成绑定二维码，扫码或手动输入即可绑定，站点下的云服务器会显示在这里。</string>
+    <string name="cloud_empty_desc">在服务商云业务系统「APP 绑定」页生成绑定二维码，扫码或手动输入即可绑定，站点下的云服务器会显示在这里。</string>
     <string name="cloud_empty_scan">扫码绑定站点</string>
     <string name="cloud_empty_manual">手动输入</string>
     <string name="cloud_health_total">共 %1$d 台</string>
@@ -102,16 +102,17 @@
     <!-- 云服务器：扫码绑定流程 -->
     <string name="cloud_pair_title_scan">扫码绑定站点</string>
     <string name="cloud_pair_scan_prompt">将二维码对准取景框</string>
-    <string name="cloud_pair_scan_viewfinder_desc">在智简魔方V10业务系统「APP 绑定」页生成绑定二维码后扫码。一个站点绑一次。</string>
+    <string name="cloud_pair_scan_viewfinder_desc">在服务商云业务系统「APP 绑定」页生成绑定二维码后扫码。一个站点绑一次。</string>
     <string name="cloud_pair_scan_action">打开相机扫码</string>
     <string name="cloud_pair_manual_entry">手动输入</string>
     <string name="cloud_pair_camera_denied">相机权限被拒绝，无法扫码。可重新发起授权，或改用手动输入。</string>
-    <string name="cloud_pair_invalid_qr">扫到的不是站点绑定二维码，请在智简魔方V10业务系统「APP 绑定」页生成后重试。</string>
+    <string name="cloud_pair_invalid_qr">扫到的不是站点绑定二维码，请在服务商云业务系统「APP 绑定」页生成后重试。</string>
+    <string name="cloud_pair_legacy_qr">该二维码来自旧版对接插件（开放协议 v1），请通知服务商升级到开放协议 v2 后重新扫码。</string>
     <string name="cloud_pair_failed_retry">重试</string>
     <string name="cloud_pair_title_trust">绑定站点</string>
-    <string name="cloud_pair_trust_desc">填写站点地址与绑定码，确认后本设备将注册到该智简魔方V10业务系统站点。地址来自二维码链接，绑定码来自站点后台。</string>
+    <string name="cloud_pair_trust_desc">填写站点地址与绑定码，确认后本设备将注册到该云业务系统站点。地址来自二维码链接，绑定码来自站点后台。</string>
     <string name="cloud_pair_trust_site">站点地址</string>
-    <string name="cloud_pair_trust_site_placeholder">https://zjmf.example.com（不填协议默认按 https）</string>
+    <string name="cloud_pair_trust_site_placeholder">https://cloud.example.com（不填协议默认按 https）</string>
     <string name="cloud_pair_trust_code">绑定码</string>
     <string name="cloud_pair_trust_code_placeholder">站点后台生成的绑定码</string>
     <string name="cloud_pair_trust_device">设备名称</string>
@@ -124,7 +125,7 @@
     <!-- 云站点管理页（我的 tab 二级页）：重命名复用绑定流程外的本地操作，解绑复用 cloud_unbind_* -->
     <string name="cloudmgmt_title">云站点管理</string>
     <string name="cloudmgmt_empty_title">还没有绑定云站点</string>
-    <string name="cloudmgmt_empty_desc">去「云服务器」tab 扫码绑定智简魔方V10业务系统站点，绑定的站点会显示在这里。</string>
+    <string name="cloudmgmt_empty_desc">去「云服务器」tab 扫码绑定服务商云业务系统站点，绑定的站点会显示在这里。</string>
     <string name="cloudmgmt_paired_at">绑定于 %1$s</string>
     <string name="cloudmgmt_repair">重新绑定</string>
     <string name="cloudmgmt_rename_desc">重命名</string>
@@ -142,6 +143,7 @@
     <string name="cloudsite_status_ok">正常</string>
     <string name="cloudsite_repair_desc">站点令牌已失效，无法获取服务器数据。重新扫码绑定后即可恢复。</string>
     <string name="cloudsite_rebind">重新扫码绑定</string>
+    <string name="cloudsite_system_type">系统类型：%1$s</string>
 
     <string name="mine_hosts">主机管理</string>
     <string name="mine_cloud_sites">云站点管理</string>

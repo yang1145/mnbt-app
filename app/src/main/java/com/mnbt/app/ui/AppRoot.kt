@@ -238,6 +238,10 @@ fun AppRoot() {
                         type = NavType.StringType
                         defaultValue = ""
                     },
+                    navArgument(Destinations.ARG_SYSTEM_TYPE) {
+                        type = NavType.StringType
+                        defaultValue = ""
+                    },
                 ),
             ) { entry -> CloudPairTrustScreen(navController, entry) }
             composable(

@@ -6,7 +6,7 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 
 /**
- * 一个对接 ZJMF-CBAP（智简魔方V10业务系统）的云站点，通过扫码绑定。
+ * 一个通过「MNBT 云开放协议 v2」绑定的云站点，通过扫码/手输绑定，系统无关。
  *
  * 与 [HostEntity] 同样的安全边界：[tokenRef] 只是 TokenVault 里的键，
  * JWT 本体永不落 Room（db 文件无加密，adb backup / 取证可直接读取）。
@@ -38,9 +38,13 @@ data class CloudSiteEntity(
     @ColumnInfo(name = "status")
     val status: String,
 
-    /** 已探测命中的模块名（mf_cloud / remf_cloud），胜者缓存，省掉重复探测 */
-    @ColumnInfo(name = "module_hint")
-    val moduleHint: String? = null,
+    /** 服务商系统标识（二维码 type 字段，如 zjmf/whmcs）；手输绑定为空串。仅展示用 */
+    @ColumnInfo(name = "system_type")
+    val systemType: String = "",
+
+    /** mnbt/config 下发的 capabilities 原始 JSON 数组文本；null = 尚未获取（按全能力处理） */
+    @ColumnInfo(name = "capabilities_json")
+    val capabilitiesJson: String? = null,
 
     @ColumnInfo(name = "paired_at")
     val pairedAtEpochMs: Long,

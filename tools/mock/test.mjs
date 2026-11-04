@@ -305,6 +305,81 @@ console.log('== 10. 域名配额校验（§5.5 -> 1007） ==');
   ok(over.json?.code === 1007, '超出 ymbds 最大绑定数 -> 1007', over.text);
 }
 
+console.log('== 11. 云开放协议 v2（/console/v1/） ==');
+{
+  await reset();
+
+  // 云站点请求助手：POST 自动补 _r（params 里显式给了 _r 则不覆盖，供防重放用例）
+  const cReq = async (path, { method = 'GET', params, token } = {}) => {
+    const h = {};
+    let body;
+    if (method === 'POST') {
+      body = new URLSearchParams({ _r: String(Date.now()), ...(params || {}) }).toString();
+      h['Content-Type'] = 'application/x-www-form-urlencoded';
+    }
+    if (token) h['Authorization'] = 'Bearer ' + token;
+    const r = await fetch(`${base}/console/v1/${path}`, { method, headers: h, body });
+    const text = await r.text();
+    let json = null;
+    try { json = JSON.parse(text); } catch { /* 非 JSON */ }
+    return { status: r.status, text, json };
+  };
+
+  const noCode = await cReq('mnbt/bind', { method: 'POST', params: {} });
+  ok(noCode.json?.status === 400, '云 bind 缺配对码 -> 400');
+
+  const bind = await cReq('mnbt/bind', { method: 'POST', params: { code: 'A1B2C3D4', device_name: 'Pixel 8' } });
+  ok(bind.json?.status === 200 && /^mock-jwt-/.test(bind.json?.data?.jwt || ''), '云 bind 换设备令牌');
+  ok(bind.json?.data?.proto === 2, 'bind 下发 proto=2（协议 §5.1）');
+  ok(Array.isArray(bind.json?.data?.capabilities) && bind.json.data.capabilities.includes('vnc'), 'bind 下发 capabilities 能力清单');
+  ok(!!bind.json?.data?.site_name, 'bind 返回 site_name');
+  const JT = bind.json.data.jwt;
+
+  const noAuth = await cReq('mnbt/cloud/servers');
+  ok(noAuth.status === 401 && noAuth.json?.status === 401, '无 Bearer -> HTTP 401 + 包络 401 双形态');
+
+  const cfg = await cReq('mnbt/config', { token: JT });
+  ok(cfg.json?.status === 200 && cfg.json.data.proto === 2 && cfg.json.data.operate_password_required === true, 'config 返回 proto=2 + operate_password_required + capabilities');
+
+  const servers = await cReq('mnbt/cloud/servers', { token: JT });
+  ok(servers.json?.status === 200 && servers.json.data.list.length === 3, '云服务器列表 3 台');
+  ok(servers.json.data.list.every((s) => s.id && s.name && s.power_status && s.power_desc), '列表条目含 id/name/power_status/power_desc');
+
+  const missing = await cReq('mnbt/cloud/server/99', { token: JT });
+  ok(missing.json?.status === 404, '不存在的服务器 -> 404 云服务器不存在');
+
+  const detail = await cReq('mnbt/cloud/server/1', { token: JT });
+  ok(detail.json?.status === 200 && !!detail.json.data.server.config_text && detail.json.data.server.addition?.username === 'root', '详情含 config_text/addition（兼作状态轮询源）');
+
+  const flow = await cReq('mnbt/cloud/server/1/flow', { token: JT });
+  ok(flow.json?.status === 200 && flow.json.data.list.length === 2 && flow.json.data.list[0].used === 34.2, '归一化流量端点（§5.7）');
+
+  const pwWrong = await cReq('mnbt/cloud/server/1/power', { method: 'POST', params: { func: 'off', client_operate_password: '000000' }, token: JT });
+  ok(pwWrong.json?.status === 400 && pwWrong.json.msg.includes('操作密码'), '统一电源端点密码错误 -> 400 操作密码错误', pwWrong.text);
+
+  const pwBad = await cReq('mnbt/cloud/server/1/power', { method: 'POST', params: { func: 'turbo', client_operate_password: '123456' }, token: JT });
+  ok(pwBad.json?.status === 400 && pwBad.json.data?.error_code === 'unsupported_func', '不支持的 func -> 400 unsupported_func', pwBad.text);
+
+  const pw = await cReq('mnbt/cloud/server/2/power', { method: 'POST', params: { func: 'on', client_operate_password: '123456' }, token: JT });
+  ok(pw.json?.status === 200, '统一电源端点 on 下发成功（server 2 off -> on）');
+  await new Promise((r) => setTimeout(r, 50));
+  const st = await cReq('mnbt/cloud/server/2', { token: JT });
+  ok(st.json?.data?.server?.power_status === 'on', '电源状态经详情端点轮询变为 on', st.text.slice(0, 120));
+
+  const vnc = await cReq('mnbt/cloud/server/1/vnc', { method: 'POST', token: JT });
+  ok(vnc.json?.status === 200 && /^https?:\/\//.test(vnc.json.data.url || ''), 'VNC 统一端点返回绝对地址');
+
+  // 防重放：3 秒内同 IP+URL+body 重复 POST -> 400 且无 error_code（协议 §1）
+  const replay = { func: 'off', client_operate_password: '123456', _r: String(Date.now()) };
+  const rp1 = await cReq('mnbt/cloud/server/3/power', { method: 'POST', params: replay, token: JT });
+  const rp2 = await cReq('mnbt/cloud/server/3/power', { method: 'POST', params: replay, token: JT });
+  ok(rp1.json?.status === 200 && rp2.json?.status === 400 && !rp2.json?.data?.error_code, '同 body 3 秒内重复 POST -> 防重放 400');
+
+  // v1 模块直连路由（遗留兼容，APP 已不再调用）：探测用 status 端点仍存活
+  const legacy = await cReq('mf_cloud/1/status', { token: JT });
+  ok(legacy.json?.status === 200 && !!legacy.json.data.status, '遗留 {module}/{id}/status 路由仍在（附录 A 平滑过渡）');
+}
+
 await reset();
 await app.close();
 ok(!app.server.listening, '测试结束服务器已关闭');

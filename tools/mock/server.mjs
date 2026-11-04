@@ -2,7 +2,7 @@
 // MNBT 移动 APP 本地 mock server —— 严格按 docs/prd/mobile-app.md §4/§5/§6.2 契约实现。
 // 纯 node 标准库，零 npm 依赖。仅监听 127.0.0.1，开发用途。
 //
-// 同文件还内置 ZJMF-CBAP（智简魔方V10业务系统 云站点）段落，按 docs/cloud-integration.md 契约实现，
+// 同文件还内置云站点段落（MNBT 云开放协议 v2，系统无关），按 docs/cloud-integration.md 实现，
 // 路由前缀 /console/v1/，与 MNBT 的 index.php?_r= 路由互不干扰。
 //
 // 用法：
@@ -68,13 +68,19 @@ const STATE_ERRORS = {
   low_plugin: { code: 1010, msg: 'bridge 插件版本过低，不支持该 action，请升级服务端插件' },
 };
 
-// ---------------------------------------------------------------- ZJMF-CBAP（云站点）常量
-// 全部按 docs/cloud-integration.md 契约：包络 {status, msg, data}、Bearer mock-jwt-*、
-// POST 必须带 _r（毫秒时间戳字符串）、电源操作校验 client_operate_password。
+// ---------------------------------------------------------------- 云开放协议 v2（云站点）常量
+// 全部按 docs/cloud-integration.md（v2）契约：包络 {status, msg, data}、Bearer mock-jwt-*、
+// POST 必须带 _r（毫秒时间戳字符串）、电源操作校验 client_operate_password、
+// bind/config 下发 proto + capabilities、服务器操作走 mnbt/cloud/server/{id}/... 统一路由。
+
+// 能力协商清单（协议 §6）：样例站声明全能力；真实服务端按实际能力如实申报
+const ZJMF_CAPABILITIES = ['hard_power', 'vnc', 'flow', 'credentials', 'config_text'];
 
 const ZJMF_SITE = {
   site_name: 'MockIDC 云',
   operate_password_required: true,
+  proto: 2,
+  capabilities: ZJMF_CAPABILITIES,
 };
 const ZJMF_OPERATE_PASSWORD = '123456';
 const ZJMF_TOKEN_TTL = 2_592_000; // 30 天（秒）
@@ -830,7 +836,7 @@ export function createMockServer(options = {}) {
     }
     if (sub === 'codes') return json({ ok: true, codes: [...st.pairCodes.values()] });
     if (sub === 'devices') return json({ ok: true, devices: [...st.devices.values()].map(({ token_hash, ...d }) => ({ token_hash: token_hash.slice(0, 8) + '…', ...d })) });
-    if (sub === 'help') return json({ ok: true, routes: ['/index.php?_r=/app/v1/{action}', '/app/v1/{action}', '/console/v1/…（ZJMF 云站点，见 docs/cloud-integration.md）', '/__mock__/gen_pair_code', '/__mock__/state?set=…', '/__mock__/reset', '/__mock__/codes', '/__mock__/devices'], states: Object.keys(STATE_ERRORS), fmt_override: '?_fmt=1|2|3|4 或 X-Mock-Format 头' });
+    if (sub === 'help') return json({ ok: true, routes: ['/index.php?_r=/app/v1/{action}', '/app/v1/{action}', '/console/v1/…（云站点开放协议 v2，见 docs/cloud-integration.md）', '/__mock__/gen_pair_code', '/__mock__/state?set=…', '/__mock__/reset', '/__mock__/codes', '/__mock__/devices'], states: Object.keys(STATE_ERRORS), fmt_override: '?_fmt=1|2|3|4 或 X-Mock-Format 头' });
     return json({ ok: false, error: 'unknown admin route' });
   }
 
@@ -862,6 +868,18 @@ export function createMockServer(options = {}) {
 
   function zjmfSetPower(id, status, desc) {
     st.zjmfPower.set(id, { status, desc });
+  }
+
+  /** 电源 func 的统一应用与响应（v2 统一路由与 v1 模块直连路由共用）。 */
+  function zjmfApplyPower(res, id, func) {
+    const [finalStatus, finalDesc] = ZJMF_POWER_FUNCS[func];
+    if (ZJMF_INSTANT_FUNCS.has(func)) {
+      zjmfSetPower(id, finalStatus, finalDesc); // on/off 立即生效
+    } else {
+      zjmfSetPower(id, 'operating', '操作执行中'); // reboot/hard_*：operating 2 秒再落终态
+      setTimeout(() => zjmfSetPower(id, finalStatus, finalDesc), 2000);
+    }
+    return zjmfOk(res, {});
   }
 
   async function handleZjmf(req, res, url) {
@@ -902,6 +920,8 @@ export function createMockServer(options = {}) {
           jwt: 'mock-jwt-' + crypto.randomBytes(16).toString('hex'),
           expires_in: ZJMF_TOKEN_TTL,
           site_name: ZJMF_SITE.site_name,
+          proto: 2,
+          capabilities: ZJMF_CAPABILITIES,
         });
       }
       if (action === 'refresh') {
@@ -921,11 +941,29 @@ export function createMockServer(options = {}) {
         return zjmfOk(res, { list: ZJMF_SERVERS.map(zjmfServerDto) });
       }
       if (action === 'cloud' && seg[2] === 'server' && seg[3]) {
-        if (req.method !== 'GET') return zjmfErr(res, 404, '接口不存在');
         const server = ZJMF_SERVERS.find((s) => s.id === Number(seg[3]));
         if (!server) return zjmfErr(res, 404, '云服务器不存在');
+
+        // v2 统一电源端点（协议 §5.8）：func 放 form，不支持时报 unsupported_func
+        if (seg[4] === 'power') {
+          if (req.method !== 'POST') return zjmfErr(res, 404, '接口不存在');
+          const func = String(str('func', '') || '');
+          if (!ZJMF_POWER_FUNCS[func]) {
+            return zjmfErr(res, 400, `不支持的电源操作: ${func || '(空)'}`, { error_code: 'unsupported_func' });
+          }
+          if (str('client_operate_password') !== ZJMF_OPERATE_PASSWORD) {
+            return zjmfErr(res, 400, '操作密码错误');
+          }
+          return zjmfApplyPower(res, server.id, func);
+        }
+        // v2 统一 VNC 端点（协议 §5.9，能力 vnc）
+        if (seg[4] === 'vnc') {
+          if (req.method !== 'POST') return zjmfErr(res, 404, '接口不存在');
+          return zjmfOk(res, { url: `https://mock.local/vnc/session-${server.id}` });
+        }
+        // 归一化流量（协议 §5.7，能力 flow）
         if (seg[4] === 'flow') {
-          // addon 归一化流量（契约 6）
+          if (req.method !== 'GET') return zjmfErr(res, 404, '接口不存在');
           return zjmfOk(res, {
             list: [
               { name: '流量', used: 34.2, total: 100, unit: 'GB' },
@@ -933,6 +971,8 @@ export function createMockServer(options = {}) {
             ],
           });
         }
+        // 详情（协议 §5.6，兼作状态轮询源）
+        if (req.method !== 'GET') return zjmfErr(res, 404, '接口不存在');
         return zjmfOk(res, {
           server: {
             ...zjmfServerDto(server),
@@ -977,14 +1017,7 @@ export function createMockServer(options = {}) {
         if (str('client_operate_password') !== ZJMF_OPERATE_PASSWORD) {
           return zjmfErr(res, 400, '操作密码错误');
         }
-        const [finalStatus, finalDesc] = ZJMF_POWER_FUNCS[func];
-        if (ZJMF_INSTANT_FUNCS.has(func)) {
-          zjmfSetPower(id, finalStatus, finalDesc); // on/off 立即生效
-        } else {
-          zjmfSetPower(id, 'operating', '操作执行中'); // reboot/hard_*：operating 2 秒再落终态
-          setTimeout(() => zjmfSetPower(id, finalStatus, finalDesc), 2000);
-        }
-        return zjmfOk(res, {});
+        return zjmfApplyPower(res, id, func);
       }
       return zjmfErr(res, 404, `接口不存在: /console/v1/${path}`);
     }

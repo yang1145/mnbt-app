@@ -34,12 +34,13 @@ class CloudPairViewModel(private val container: AppContainer) : ViewModel() {
     /**
      * 绑定页「确认绑定」。地址本地先规范化兜底（无协议默认按 https，与 MNBT 手动配对
      * 同一规则），码与设备名原样交给仓库层；设备名空串时由仓库侧处理。
+     * [systemType] 为二维码 type 字段（服务商系统标识）；手输绑定为空串。
      */
-    fun pair(rawBase: String, rawCode: String, deviceName: String) {
+    fun pair(rawBase: String, rawCode: String, deviceName: String, systemType: String = "") {
         if (pairing) return
         val base = HostUrl.normalize(rawBase)
         if (base == null) {
-            _state.value = CloudPairState.Failed("站点地址无效，示例：https://zjmf.example.com 或 http://1.2.3.4/zjmf")
+            _state.value = CloudPairState.Failed("站点地址无效，示例：https://cloud.example.com 或 http://1.2.3.4/panel")
             return
         }
         val code = rawCode.trim()
@@ -50,7 +51,7 @@ class CloudPairViewModel(private val container: AppContainer) : ViewModel() {
         pairing = true
         viewModelScope.launch {
             _state.value = CloudPairState.Pairing
-            val result = container.cloudSiteRepository.pairSite(base, code, deviceName.trim())
+            val result = container.cloudSiteRepository.pairSite(base, code, deviceName.trim(), systemType)
             pairing = false
             _state.value = result.fold(
                 onSuccess = { CloudPairState.Bound },
